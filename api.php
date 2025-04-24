@@ -7,7 +7,7 @@ class db_access {
     private  $conn;
     function __construct() {
         $this->conn = new mysqli($this->host, $this->user, $this->pass, $this->db);
-        
+
         if ($this->conn->connect_error) {
             printf("Connection failed: %s\n", $this->conn->connect_error);
         } else {
@@ -24,6 +24,30 @@ class db_access {
     }
 }
 
-$conn = new db_access()
+class postgres_access {
+    private  $host = "86.19.219.159";
+    private  $user = "samuel";
+    private  $pass = "QwErTy1243!";
+    private  $db = "restAPI";
+    private  $conn;
+    function __construct() {
+        $this->conn = new mysqli($this->host, $this->user, $this->pass, $this->db);
+        
+        if ($this->conn->connect_error) {
+            printf("Connection failed: %s\n", $this->conn->connect_error);
+        } else {
+            printf("Connected successfully: %s\n", $this->conn->host_info);
+        }
+    }
+    function __destruct() {
+        if ($this->conn) {
+            $this->conn->close();
+            printf("Connection closed: %s\n", $this->conn->connect_error);
+        } else {
+            print("Connection could not be closed: " . $this->conn->connect_error);
+        }
+    }
+}
+$conn = new postgres_access()
 
 ?>
