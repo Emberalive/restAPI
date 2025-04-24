@@ -32,13 +32,13 @@ class db_access
     //this is getting the messages sent from someone else and received by a specific user
     function GET($source, $target)
     {
-        $sent_stmnt = $this->conn->prepare("SELECT * FROM messages WHERE source = ? AND target = ?");
+        $sent_stmnt = $this->conn->prepare("SELECT * FROM message WHERE source = ? AND target = ?");
         $sent_stmnt->bind_param("ss", $source, $target);
 
         $sent_stmnt->execute();
         $sent_result = $sent_stmnt->get_result();
 
-        $recieved_stmnt = $this->conn->prepare("SELECT * FROM messages WHERE source = ? AND target = ?");
+        $recieved_stmnt = $this->conn->prepare("SELECT * FROM message WHERE source = ? AND target = ?");
         $recieved_stmnt->bind_param("ss", $target, $source);
 
         $recieved_stmnt->execute();
@@ -66,12 +66,14 @@ class db_access
                 $json_data[] = json_encode($message);
             }
             file_put_contents("messages.json", implode(PHP_EOL, $json_data));
+        } else {
+            echo "No messages found";
         }
     }
         //This is creating a message insertion into the database
         function POST($source, $target, $message)
         {
-            $stmnt = $this->conn->prepare("INSERT INTO messages(target, source, message)
+            $stmnt = $this->conn->prepare("INSERT INTO message(target, source, message)
           VALUES(?, ?, ?)");
             $stmnt->bind_param("sss", $target, $source, $message);
             $stmnt->execute();
