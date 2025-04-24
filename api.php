@@ -48,6 +48,6 @@ class postgres_access {
         }
     }
 }
-$conn = new postgres_access()
+$conn = new db_access()
 
 ?>
