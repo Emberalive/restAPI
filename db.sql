@@ -1,0 +1,7 @@
+CREATE TABLE message(
+    id int AUTO_INCREMENT PRIMARY KEY,
+    target VARCHAR(20) NOT NULL,
+    source VARCHAR(20) NOT NULL,
+    text MEDIUMTEXT NOT NULL,
+    sent TIMESTAMP NOT NULL
+);
