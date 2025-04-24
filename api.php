@@ -22,8 +22,19 @@ class db_access {
             print("Connection could not be closed: " . $this->conn->connect_error);
         }
     }
+    function GET($source, $target) {
+        $stmnt = $this->conn->prepare("SELECT * FROM messages WHERE source = ? AND target = ?");
+        $stmnt->bind_param("ss", $source, $target);
+
+        $stmnt->execute();
+        $result = $stmnt->get_result();
+
+        for ($i = 0; $i < $result->num_rows; $i++) {
+            $row = $result->fetch_assoc();
+        }
+    }
 }
 
 $conn = new db_access()
-
+$conn->GET()
 ?>
