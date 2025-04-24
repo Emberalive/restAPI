@@ -1,4 +1,14 @@
 <?php
+//ini_set('display_errors', 1);
+//error_reporting(E_ALL);
+//
+//header('Content-Type: application/json');
+
+//$method = $_SERVER['REQUEST_METHOD'];
+//if (!in_array($method, ['GET', 'POST'])) {
+//    http_response_code(405); // Method Not Allowed
+//    exit;
+//}
 class db_access
 {
     private $host = "165.227.235.122";
@@ -12,9 +22,9 @@ class db_access
         $this->conn = new mysqli($this->host, $this->user, $this->pass, $this->db);
 
         if ($this->conn->connect_error) {
-            printf("Connection failed: %s\n", $this->conn->connect_error);
+            HTTP_response_code(500);
         } else {
-            printf("Connected successfully: %s\n", $this->conn->host_info);
+            HTTP_response_code(200);
         }
     }
 
@@ -22,10 +32,6 @@ class db_access
     {
         if ($this->conn) {
             $this->conn->close();
-            printf("Connection closed: %s\n", $this->conn->connect_error);
-            if ($this->conn->connect_error) {
-                print("Connection could not be closed: " . $this->conn->connect_error);
-            }
         }
     }
 
@@ -45,7 +51,6 @@ class db_access
         $recived_result = $recieved_stmnt->get_result();
 
 
-//        $num_rows = $sent_result->num_rows + $recived_result->num_rows;
         $messages = [];
 
         while ($row = $recived_result->fetch_assoc()) {
@@ -58,38 +63,33 @@ class db_access
         }
 
         if (count($messages) > 0) {
-            $json_data = [];
+            $json_data = json_encode($messages, JSON_PRETTY_PRINT);
 
-            // Encode each message to JSON
-            foreach ($messages as $message) {
-                // Store the JSON-encoded message
-                $json_data[] = json_encode($message);
-            }
-            file_put_contents("messages.json", implode(PHP_EOL, $json_data));
-        } else {
-            echo "No messages found";
+            file_put_contents("messages.json", $json_data, FILE_APPEND);
+            echo $json_data;
         }
     }
         //This is creating a message insertion into the database
         function POST($source, $target, $message)
         {
-            $stmnt = $this->conn->prepare("INSERT INTO message(target, source, message)
+            $stmnt = $this->conn->prepare("INSERT INTO message(target, source, text)
           VALUES(?, ?, ?)");
             $stmnt->bind_param("sss", $target, $source, $message);
             $stmnt->execute();
 
-            $result = $stmnt->get_result();
-            for ($i = 0; $i < $result->num_rows; $i++) {
-                $row = $result->fetch_assoc();
-            }
         }
     }
 
 $conn = new db_access();
 
+//if ($method == 'GET') {
+//    $conn->GET($_GET['source'], $_GET['target']);
+//} else {
+//    $conn->POST($_GET['source'], $_GET['target'], $_GET['message']);
+//}
 
-$conn->POST("name", "name", "This is a message");
+$conn->POST("tittyFucker", "dickFucker", "This is a message");
 
-$conn->GET("name", "name");
+$conn->GET("tittyFucker", "dickFucker");
 
 ?>
