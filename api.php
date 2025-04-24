@@ -23,4 +23,6 @@ class db_access {
     }
 }
 
+$conn = new db_access()
+
 ?>
