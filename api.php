@@ -7,6 +7,7 @@ class db_access {
     private  $conn;
     function __construct() {
         $this->conn = new mysqli($this->host, $this->user, $this->pass, $this->db);
+        
         if ($this->conn->connect_error) {
             printf("Connection failed: %s\n", $this->conn->connect_error);
         } else {
