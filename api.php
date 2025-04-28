@@ -89,10 +89,16 @@ class messageService {
             array_push($messages['sent_from'], $row);
         }
 
-        if (!$messages['received_by'] && !$messages['sent_from']) {
+        if (empty($messages['received_by']) && empty($messages['sent_from'])) {
+            // Debug: Check if headers are already sent
+            if (headers_sent($file, $line)) {
+                error_log("Headers already sent in $file on line $line");
+            }
+
             http_response_code(204);
-            echo json_encode(["Invalid parameters!"]);
-            return false;
+//            echo json_encode(["Invalid parameters!"]);
+
+            exit;
         } else {
             $json_data = json_encode($messages, JSON_PRETTY_PRINT);
 
@@ -137,6 +143,9 @@ class messageService {
 }
 
 $db = new db_access();
+if (!$db->getConnection()) {
+    die("DB connection failed!");
+}
 
 $message = new messageService($db);
 
@@ -147,6 +156,8 @@ $message = new messageService($db);
 //}
 
 //$message->POST("woman", "man", "This is a message");
-$message->GET("man", "woman");
+$message->GET("man", "women");
 
 //$conn->GET("blah", "blah");
+
+?>
