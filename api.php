@@ -49,22 +49,22 @@ class messageService {
     }
 
     //this is getting the messages sent from someone else and received by a specific user
-    function GET($source, $target) {
+    function GET($user) {
 
-        if (empty($source) || empty($target)) {
+        if (empty($user)) {
             http_response_code(400);
             echo json_encode(["Invalid parameters!"]);
             return false;
         }
         try {
-            $sent_stmnt = $this->conn->prepare("SELECT * FROM message WHERE source = ? AND target = ?");
-            $sent_stmnt->bind_param("ss", $source, $target);
+            $sent_stmnt = $this->conn->prepare("SELECT * FROM message WHERE source = ?");
+            $sent_stmnt->bind_param("s", $user);
 
             $sent_stmnt->execute();
             $sent_result = $sent_stmnt->get_result();
 
-            $recieved_stmnt = $this->conn->prepare("SELECT * FROM message WHERE source = ? AND target = ?");
-            $recieved_stmnt->bind_param("ss", $target, $source);
+            $recieved_stmnt = $this->conn->prepare("SELECT * FROM message WHERE target = ?");
+            $recieved_stmnt->bind_param("s", $user);
 
             $recieved_stmnt->execute();
             $recived_result = $recieved_stmnt->get_result();
@@ -90,23 +90,18 @@ class messageService {
         }
 
         if (empty($messages['received_by']) && empty($messages['sent_from'])) {
-            // Debug: Check if headers are already sent
-            if (headers_sent($file, $line)) {
-                error_log("Headers already sent in $file on line $line");
-            }
+//            echo json_encode(["Invalid parameters! | Status Code: 204"]);
 
             http_response_code(204);
-//            echo json_encode(["Invalid parameters!"]);
-
-            exit;
+            return false;
         } else {
             $json_data = json_encode($messages, JSON_PRETTY_PRINT);
 
             file_put_contents("messages.json", $json_data, FILE_APPEND);
             echo $json_data;
             http_response_code(200);
+            return true;
         }
-        return true;
     }
 
     //This is creating a message insertion into the database
@@ -155,8 +150,8 @@ $message = new messageService($db);
 //    $message->POST($_GET['source'], $_GET['target'], $_GET['message']);
 //}
 
-//$message->POST("woman", "man", "This is a message");
-$message->GET("man", "women");
+//$message->POST("women", "women", "This is a message");
+$message->GET("women");
 
 //$conn->GET("blah", "blah");
 
