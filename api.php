@@ -50,13 +50,14 @@ class messageService {
 
     //this is getting the messages sent from someone else and received by a specific user
     function GET($user) {
-
+        //check if the user is empty, if so it throws a 400 status code
         if (empty($user)) {
             http_response_code(400);
             echo json_encode(["Invalid parameters!"]);
             return false;
         }
         try {
+            //trying the select queries if it fails then it throws a 500 status code in the except block, and states what the error is in json form
             $sent_stmnt = $this->conn->prepare("SELECT * FROM message WHERE source = ?");
             $sent_stmnt->bind_param("s", $user);
 
@@ -75,6 +76,7 @@ class messageService {
             return false;
         }
 
+        //set up the json structure to segregate the sent by and recieved by messages
         $messages = [
             "sent_from" => [],
             "received_by" => []
@@ -106,6 +108,7 @@ class messageService {
 
     //This is creating a message insertion into the database
     function POST($source, $target, $message) {
+        //if there are incorrect parameters passed through it, it throws a 400 status code
         if (empty($source) || empty($target) || empty($message)) {
             http_response_code(400);
             echo json_encode(["Invalid parameters!"]);
@@ -117,6 +120,7 @@ class messageService {
             $stmnt->bind_param("sss", $target, $source, $message);
             $stmnt->execute();
 
+            //if the message is made and has been inserted into the database then it throws a 201 status code
             if ($stmnt->affected_rows > 0) {
                 $check_stmt  = $this->conn->prepare("SELECT LAST_INSERT_ID();");
                 $check_stmt->execute();
@@ -126,10 +130,12 @@ class messageService {
                 echo json_encode($id);
                 return true;
             } else {
+                //if it didnt make a database insertion then it throws a 500 status code
                 http_response_code(500);
                 return false;
             }
         } catch (mysqli_sql_exception $e){
+            //if any of the select queries ort database transactions fail, then it throws a 500 status code
             HTTP_response_code(500);
             echo json_encode(["error" => $e->getMessage()]);
             return false;
@@ -137,15 +143,20 @@ class messageService {
     }
 }
 
+//creates a new db_access class and kills it if there is no connection available
 $db = new db_access();
 if (!$db->getConnection()) {
-    die("DB connection failed!");
+    http_response_code(500);
+    die(json_encode(['ERROR' =>"DB connection failed!"]));
 }
 
+//creating a new messageClass and passing through the db class as a parameter
 $message = new messageService($db);
 
+
+//checks if the method is GET or POST and calls a certain method depending on which one it is
 //if ($method == 'GET') {
-//    $message->GET($_GET['source'], $_GET['target']);
+//    $message->GET($_GET['source']);
 //} else {
 //    $message->POST($_GET['source'], $_GET['target'], $_GET['message']);
 //}
