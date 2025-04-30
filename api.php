@@ -5,11 +5,11 @@ error_reporting(E_ALL);
 header('Content-Type: application/json');
 
 //only allowing post and get requests
-//$method = $_SERVER['REQUEST_METHOD'];
-//if (!in_array($method, ['GET', 'POST'])) {
-//    http_response_code(405); // Method Not Allowed
-//    exit;
-//}
+$method = $_SERVER['REQUEST_METHOD'];
+if (!in_array($method, ['GET', 'POST'])) {
+    http_response_code(405); // Method Not Allowed
+    exit;
+}
 class db_access {
     private $host = "165.227.235.122";
     private $user = "ss2979_samuel";
@@ -155,14 +155,14 @@ $message = new messageService($db);
 
 
 //checks if the method is GET or POST and calls a certain method depending on which one it is
-//if ($method == 'GET') {
-//    $message->GET($_GET['source']);
-//} else {
-//    $message->POST($_GET['source'], $_GET['target'], $_GET['message']);
-//}
+if ($method == 'GET') {
+    $message->GET($_GET['source']);
+} else {
+    $message->POST($_GET['source'], $_GET['target'], $_GET['message']);
+}
 
 //$message->POST("women", "women", "This is a message");
-$message->GET("women");
+//$message->GET("bob");
 
 //$conn->GET("blah", "blah");
 
