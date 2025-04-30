@@ -49,61 +49,64 @@ class messageService {
     }
 
     //this is getting the messages sent from someone else and received by a specific user
-    function GET($user) {
+    function GET($source, $target) {
         //check if the user is empty, if so it throws a 400 status code
-        if (empty($user)) {
+        if (empty($source) && empty($target)) {
             http_response_code(400);
-            echo json_encode(["Invalid parameters!"]);
+            echo json_encode(["error" => "At least one of source or target must be provided."]);
+            return false;
+        } else if ($target == $source) {
+            http_response_code(400);
+            echo json_encode(["error" => "Both parameters are the same user"]);
             return false;
         }
+
         try {
-            //trying the select queries if it fails then it throws a 500 status code in the except block, and states what the error is in json form
-            $sent_stmnt = $this->conn->prepare("SELECT * FROM message WHERE source = ?");
-            $sent_stmnt->bind_param("s", $user);
+            $messages = [];
 
-            $sent_stmnt->execute();
-            $sent_result = $sent_stmnt->get_result();
+            if (!empty($source) && !empty($target)) {
+                // source and target both present
+                $stmt = $this->conn->prepare("SELECT * FROM message WHERE source = ? AND target = ?");
+                $stmt->bind_param("ss", $source, $target);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $messages["from_source_to_target"] = $result->fetch_all(MYSQLI_ASSOC);
 
-            $recieved_stmnt = $this->conn->prepare("SELECT * FROM message WHERE target = ?");
-            $recieved_stmnt->bind_param("s", $user);
+                if (empty($messages["from_source_to_target"]) && empty($messages["sent_from"]) && empty($messages["received_by"])) {
+                    http_response_code(204);
+                } else {
+                    echo json_encode($messages, JSON_PRETTY_PRINT);
+                }
+                return true;
+            } else if (!empty($source)) {
+                // only source
+                $stmt = $this->conn->prepare("SELECT * FROM message WHERE source = ?");
+                $stmt->bind_param("s", $source);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $messages["sent_from"] = $result->fetch_all(MYSQLI_ASSOC);
+            } else if (!empty($target)) {
+                // only target
+                $stmt = $this->conn->prepare("SELECT * FROM message WHERE target = ?");
+                $stmt->bind_param("s", $target);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $messages["received_by"] = $result->fetch_all(MYSQLI_ASSOC);
+            }
 
-            $recieved_stmnt->execute();
-            $recived_result = $recieved_stmnt->get_result();
-
+            if (empty($messages["from_source_to_target"]) && empty($messages["sent_from"]) && empty($messages["received_by"])) {
+                http_response_code(204);
+            } else {
+                echo json_encode($messages, JSON_PRETTY_PRINT);
+                http_response_code(200);
+            }
+            return true;
         } catch (mysqli_sql_exception $e) {
             http_response_code(500);
             echo json_encode(["error" => $e->getMessage()]);
             return false;
         }
 
-        //set up the json structure to segregate the sent by and recieved by messages
-        $messages = [
-            "sent_from" => [],
-            "received_by" => []
-        ];
-
-        while ($row = $recived_result->fetch_assoc()) {
-            array_push($messages['received_by'], $row);
-        }
-
-        // Fetch sent messages
-        while ($row = $sent_result->fetch_assoc()) {
-            array_push($messages['sent_from'], $row);
-        }
-
-        if (empty($messages['received_by']) && empty($messages['sent_from'])) {
-//            echo json_encode(["Invalid parameters! | Status Code: 204"]);
-
-            http_response_code(204);
-            return false;
-        } else {
-            $json_data = json_encode($messages, JSON_PRETTY_PRINT);
-
-            file_put_contents("messages.json", $json_data, FILE_APPEND);
-            echo $json_data;
-            http_response_code(200);
-            return true;
-        }
     }
 
     //This is creating a message insertion into the database
@@ -136,7 +139,7 @@ class messageService {
             }
         } catch (mysqli_sql_exception $e){
             //if any of the select queries ort database transactions fail, then it throws a 500 status code
-            HTTP_response_code(500);
+            http_response_code(500);
             echo json_encode(["error" => $e->getMessage()]);
             return false;
         }
@@ -156,13 +159,18 @@ $message = new messageService($db);
 
 //checks if the method is GET or POST and calls a certain method depending on which one it is
 if ($method == 'GET') {
-    $message->GET($_GET['source']);
+    $source = isset($_GET['source']) ? $_GET['source'] : null;
+    $target = isset($_GET['target']) ? $_GET['target'] : null;
+    $message->GET($source, $target);
 } else {
     $message->POST($_GET['source'], $_GET['target'], $_GET['message']);
 }
 
-//$message->POST("women", "women", "This is a message");
-//$message->GET("bob");
+//$message->POST("pippa", "bob", "to pippa from bob");
+//$message->POST("tyler", "bob", "to bob from tyler");
+//$message->GET("tyler", null);
+
+
 
 //$conn->GET("blah", "blah");
 
