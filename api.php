@@ -84,17 +84,17 @@ class messageService {
                 $stmt->bind_param("s", $source);
                 $stmt->execute();
                 $result = $stmt->get_result();
-                $messages["sent_from"] = $result->fetch_all(MYSQLI_ASSOC);
+                $messages["sent_messages"] = $result->fetch_all(MYSQLI_ASSOC);
             } else if (!empty($target)) {
                 // only target
                 $stmt = $this->conn->prepare("SELECT * FROM message WHERE target = ?");
                 $stmt->bind_param("s", $target);
                 $stmt->execute();
                 $result = $stmt->get_result();
-                $messages["received_by"] = $result->fetch_all(MYSQLI_ASSOC);
+                $messages["received_messages"] = $result->fetch_all(MYSQLI_ASSOC);
             }
 
-            if (empty($messages["from_source_to_target"]) && empty($messages["sent_from"]) && empty($messages["received_by"])) {
+            if (empty($messages["from_source_to_target"]) && empty($messages["sent_messages"]) && empty($messages["received_messages"])) {
                 http_response_code(204);
             } else {
                 echo json_encode($messages, JSON_PRETTY_PRINT);
@@ -169,8 +169,6 @@ if ($method == 'GET') {
 //$message->POST("pippa", "bob", "to pippa from bob");
 //$message->POST("tyler", "bob", "to bob from tyler");
 //$message->GET("tyler", null);
-
-
 
 //$conn->GET("blah", "blah");
 
