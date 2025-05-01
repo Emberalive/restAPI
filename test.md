@@ -16,6 +16,9 @@ curl -X GET "https://ss2979.brighton.domains/CI527/REST_API/api.php?source=alice
 curl -X GET "https://ss2979.brighton.domains/CI527/REST_API/api.php?target=bobby"
 ```
 
+```bash
+curl -X GET "https://ss2979.brighton.domains/CI527/REST_API/api.php?target=bobby&source=alice"
+```
 **When using `PHPStorm` which is the ide that I am using**
 
 I am able to run the bash scripts and they have worked, in the way that I expect them to

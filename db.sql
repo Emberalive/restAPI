@@ -7,7 +7,7 @@ CREATE TABLE message(
 );
 
 ALTER TABLE message
-    add constraint check_min_source_length check (length(source) >= 4);
+    add constraint check_min_length check (length(source) >= 4 AND (length(target) >= 4));
 
-ALTER TABLE message
-    add constraint check_min_target_length check (length(target) >= 4);
+-- ALTER TABLE message
+--     add constraint check_min_target_length check (length(target) >= 4);

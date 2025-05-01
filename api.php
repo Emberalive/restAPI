@@ -10,7 +10,7 @@ if (!in_array($method, ['GET', 'POST'])) {
     http_response_code(405); // Method Not Allowed
     exit;
 }
-class db_access {
+class DBAaccess {
     private $host = "165.227.235.122";
     private $user = "ss2979_samuel";
     private $pass = "QwErTy1243!";
@@ -27,7 +27,7 @@ class db_access {
         }
     }
 
-    public function getConnection() {
+    public function get_connection() {
         if ($this->conn) {
             return $this->conn;
         }
@@ -42,9 +42,9 @@ class db_access {
         }
     }
 }
-class messageService {
+class MessageService {
     private $conn;
-    function __construct(db_access $dbConnection){
+    function __construct(DBAaccess $dbConnection){
         $this->conn = $dbConnection->getConnection();
     }
 
@@ -70,35 +70,28 @@ class messageService {
                 $stmt->bind_param("ss", $source, $target);
                 $stmt->execute();
                 $result = $stmt->get_result();
-                $messages["from_source_to_target"] = $result->fetch_all(MYSQLI_ASSOC);
-
-                if (empty($messages["from_source_to_target"]) && empty($messages["sent_from"]) && empty($messages["received_by"])) {
-                    http_response_code(204);
-                } else {
-                    echo json_encode($messages, JSON_PRETTY_PRINT);
-                }
-                return true;
+                $messages["messages"] = $result->fetch_all(MYSQLI_ASSOC);
             } else if (!empty($source)) {
                 // only source
                 $stmt = $this->conn->prepare("SELECT * FROM message WHERE source = ?");
                 $stmt->bind_param("s", $source);
                 $stmt->execute();
                 $result = $stmt->get_result();
-                $messages["sent_messages"] = $result->fetch_all(MYSQLI_ASSOC);
+                $messages["messages"] = $result->fetch_all(MYSQLI_ASSOC);
             } else if (!empty($target)) {
                 // only target
                 $stmt = $this->conn->prepare("SELECT * FROM message WHERE target = ?");
                 $stmt->bind_param("s", $target);
                 $stmt->execute();
                 $result = $stmt->get_result();
-                $messages["received_messages"] = $result->fetch_all(MYSQLI_ASSOC);
+                $messages["messages"] = $result->fetch_all(MYSQLI_ASSOC);
             }
 
-            if (empty($messages["from_source_to_target"]) && empty($messages["sent_messages"]) && empty($messages["received_messages"])) {
+            if (empty($messages["messages"])) {
                 http_response_code(204);
             } else {
-                echo json_encode($messages, JSON_PRETTY_PRINT);
                 http_response_code(200);
+                echo json_encode($messages, JSON_PRETTY_PRINT);
             }
             return true;
         } catch (mysqli_sql_exception $e) {
@@ -147,14 +140,14 @@ class messageService {
 }
 
 //creates a new db_access class and kills it if there is no connection available
-$db = new db_access();
-if (!$db->getConnection()) {
+$db = new DBAaccess();
+if (!$db->get_connection()) {
     http_response_code(500);
     die(json_encode(['ERROR' =>"DB connection failed!"]));
 }
 
 //creating a new messageClass and passing through the db class as a parameter
-$message = new messageService($db);
+$message = new MessageService($db);
 
 
 //checks if the method is GET or POST and calls a certain method depending on which one it is
@@ -165,11 +158,4 @@ if ($method == 'GET') {
 } else {
     $message->POST($_GET['source'], $_GET['target'], $_GET['message']);
 }
-
-//$message->POST("pippa", "bob", "to pippa from bob");
-//$message->POST("tyler", "bob", "to bob from tyler");
-//$message->GET("tyler", null);
-
-//$conn->GET("blah", "blah");
-
 ?>
