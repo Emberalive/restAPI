@@ -45,7 +45,7 @@ class DBAaccess {
 class MessageService {
     private $conn;
     function __construct(DBAaccess $dbConnection){
-        $this->conn = $dbConnection->getConnection();
+        $this->conn = $dbConnection->get_connection();
     }
 
     //this is getting the messages sent from someone else and received by a specific user
