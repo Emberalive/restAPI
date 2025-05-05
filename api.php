@@ -114,20 +114,20 @@ class MessageService {
             http_response_code(500);
             echo json_encode(["error" => $e->getMessage()]);
             return false;
+        } finally {
+            //close the statement
+            if (isset($stmt)) {
+                $stmt->close();
+            }
         }
     }
 
     //This is creating a message insertion into the database
-    function POST() {
-        // Read the raw input stream
-        $input = file_get_contents('php://input');
-        $data = json_decode($input, true);
+    function POST($input, $data) {
 
         $data_fields = ['source', 'target', 'message'];
         // Check if all required fields are present in the JSON input
-        $data_num = 0;
         foreach ($data_fields as $field) {;
-            $data_num ++;
             if (!isset($data[$field]) && empty($data[$field])) {
                 http_response_code(400);
                 echo json_encode(["error" => "Missing field: $field"]);
@@ -145,6 +145,12 @@ class MessageService {
         $target = $data['target'];
         $message = $data['message'];
 
+        if ($target == $source) {
+            http_response_code(400);
+            echo json_encode(["error" => "Both parameters are the same user"]);
+            exit;
+        }
+
         try {
             $stmnt = $this->conn->prepare("INSERT INTO message (target, source, text) VALUES(?, ?, ?)");
             $stmnt->bind_param("sss", $target, $source, $message);
@@ -155,9 +161,12 @@ class MessageService {
                 $check_stmt = $this->conn->prepare("SELECT LAST_INSERT_ID();");
                 $check_stmt->execute();
                 $check_results = $check_stmt->get_result();
-                $id = $check_results->fetch_assoc();
+                $id = $check_results->fetch_row()[0];
                 http_response_code(201);
-                echo json_encode($id);
+                $response = [
+                    "id" => $id
+                ];
+                echo json_encode($response, JSON_PRETTY_PRINT);
                 return true;
             } else {
                 //if it didnt make a database insertion then it throws a 500 status code
@@ -169,6 +178,11 @@ class MessageService {
             http_response_code(500);
             echo json_encode(["error" => $e->getMessage()]);
             return false;
+        } finally {
+            //close the statement
+            if (isset($stmnt)) {
+                $stmnt->close();
+            }
         }
     }
 }
@@ -196,7 +210,10 @@ if ($method == 'GET') {
 } else {
     try {
         //handle POST request
-        $message->POST();
+        // Read the raw input stream
+        $input = file_get_contents('php://input');
+        $data = json_decode($input, true);
+        $message->POST($input, $data);
     } catch (Exception $e) {
         http_response_code(500);
         echo json_encode(["error" => $e->getMessage()]);
