@@ -34,7 +34,7 @@ class DBAccess {
         } catch (mysqli_sql_exception $e) {
             http_response_code(500);
             echo json_encode(["error" => $e->getMessage()]);
-            exit;["error" => "Content-Type must be application/json"]);
+            exit;
         }
     }
 
