@@ -1,4 +1,5 @@
 <?php
+// Entry point of the script
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
@@ -17,6 +18,8 @@ if ($method == 'POST' && strpos($content_type, 'application/json') === false) {
     echo json_encode(["error" => "Content-Type must be application/json"]);
     exit;
 }
+
+// Establish a connection to the database.
 class DBAccess {
     private $host = "165.227.235.122";
     private $user = "ss2979_samuel";
@@ -31,10 +34,11 @@ class DBAccess {
         } catch (mysqli_sql_exception $e) {
             http_response_code(500);
             echo json_encode(["error" => $e->getMessage()]);
-            exit;
+            exit;["error" => "Content-Type must be application/json"]);
         }
     }
 
+    // Return the database connection object.
     public function get_connection() {
         if ($this->conn) {
             return $this->conn;
@@ -56,7 +60,11 @@ class MessageService {
         $this->conn = $dbConnection->get_connection();
     }
 
-    //this is getting the messages sent from someone else and received by a specific user
+    // Retrieve messages based on the source and/or target.
+    // - If both source and target are provided, fetch messages between them.
+    // - If only source is provided, fetch messages sent by the source.
+    // - If only target is provided, fetch messages received by the target.
+    // Return a 400 error if neither source or target is provided.
     function GET($source, $target) {
         //check if the user is empty, if so it throws a 400 status code
         if (empty($source) && empty($target)) {
@@ -157,7 +165,7 @@ class MessageService {
                 return false;
             }
         } catch (mysqli_sql_exception $e){
-            //if any of the select queries ort database transactions fail, then it throws a 500 status code
+            //if any of the select queries or database transactions fail, then it throws a 500 status code
             http_response_code(500);
             echo json_encode(["error" => $e->getMessage()]);
             return false;
@@ -176,9 +184,10 @@ if (!$db->get_connection()) {
 //creating a new messageClass and passing through the db class as a parameter
 $message = new MessageService($db);
 
-
+// Route the request based on the HTTP method.
 if ($method == 'GET') {
     try{
+        //handle GET request
         $message->GET($_GET['source'], target: $_GET['target']);
     } catch (Exception $e) {
         http_response_code(500);
@@ -186,16 +195,11 @@ if ($method == 'GET') {
     }
 } else {
     try {
+        //handle POST request
         $message->POST();
     } catch (Exception $e) {
         http_response_code(500);
         echo json_encode(["error" => $e->getMessage()]);
     }
 }
-
-//$message->POST("woman", "man", "This is a message");
-// $message->GET("man", "women");
-
-//$conn->GET("blah", "blah");
-
 ?>
