@@ -1,0 +1,119 @@
+// Test cases for the REST API
+
+// Test GET requests
+
+### Test GET request - Valid source and target
+GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user1&target=user2
+Content-Type: application/json
+
+### Test GET request - Missing source parameter
+GET https://ss2979.brighton.domains/CI527/REST_API/api.php?target=user2
+Content-Type: application/json
+
+### Test GET request - Missing target parameter
+GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user1
+Content-Type: application/json
+
+### Test GET request - Both source and target missing
+GET https://ss2979.brighton.domains/CI527/REST_API/api.php
+Content-Type: application/json
+
+### Test GET - extra parameters
+GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user1&target=user2&extra_param=This should be ignored
+Content-Type: application/json
+
+
+// Test POST requests
+
+### Test POST request - Valid data
+POST https://ss2979.brighton.domains/CI527/REST_API/api.php
+Content-Type: application/json
+
+{
+  "source": "user1",
+  "target": "user2",
+  "message": "Hello, this is a valid test message!"
+}
+
+### Test POST request - Missing source
+POST https://ss2979.brighton.domains/CI527/REST_API/api.php
+Content-Type: application/json
+
+{
+  "target": "user2",
+  "message": "Missing source parameter"
+}
+
+### Test POST request - Missing target
+POST https://ss2979.brighton.domains/CI527/REST_API/api.php
+Content-Type: application/json
+
+{
+  "source": "user1",
+  "message": "Missing target parameter"
+}
+
+### Test POST request - Missing message
+POST https://ss2979.brighton.domains/CI527/REST_API/api.php
+Content-Type: application/json
+
+{
+  "source": "user1",
+  "target": "user2"
+}
+
+### Test POST request - Empty body
+POST https://ss2979.brighton.domains/CI527/REST_API/api.php
+Content-Type: application/json
+
+{}
+
+### Test POST request - Invalid content type
+POST https://ss2979.brighton.domains/CI527/REST_API/api.php
+Content-Type: text/plain
+source=user1&target=user2&message=Hello
+
+### Test POST request - extra parameters
+POST https://ss2979.brighton.domains/CI527/REST_API/api.php
+Content-Type: application/json
+
+{
+  "source": "user1",
+  "target": "user2",
+  "message": "Hello, this is a valid test message!",
+  "extra_param": "This should be ignored"
+}
+
+### Test POST request - Missing Content-Type header
+POST https://ss2979.brighton.domains/CI527/REST_API/api.php
+
+{
+  "source": "user1",
+  "target": "user2",
+  "message": "This is a test message"
+}
+
+### Test POST request - Empty string values
+POST https://ss2979.brighton.domains/CI527/REST_API/api.php
+Content-Type: application/json
+
+{
+  "source": "",
+  "target": "",
+  "message": ""
+}
+
+### Test POST request - Non-JSON body
+POST https://ss2979.brighton.domains/CI527/REST_API/api.php
+Content-Type: application/x-www-form-urlencoded
+
+source=user1&target=user2&message=This is a non-JSON body
+
+### Test POST request - Invalid JSON format
+POST https://ss2979.brighton.domains/CI527/REST_API/api.php
+Content-Type: application/json
+
+{
+  "source": "user1",
+  "target": "user2",
+  "message": "Invalid JSON format"

@@ -1,5 +1,5 @@
 <?php
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
 header('Content-Type: application/json');
@@ -7,10 +7,17 @@ header('Content-Type: application/json');
 //only allowing post and get requests
 $method = $_SERVER['REQUEST_METHOD'];
 if (!in_array($method, ['GET', 'POST'])) {
-    http_response_code(405); // Method Not Allowed
+   http_response_code(405); // Method Not Allowed
+   exit;
+}
+
+$content_type = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
+if ($method == 'POST' && strpos($content_type, 'application/json') === false) {
+    http_response_code(415); // Unsupported Media Type
+    echo json_encode(["error" => "Content-Type must be application/json"]);
     exit;
 }
-class DBAaccess {
+class db_access {
     private $host = "165.227.235.122";
     private $user = "ss2979_samuel";
     private $pass = "QwErTy1243!";
@@ -58,7 +65,7 @@ class MessageService {
         } else if ($target == $source) {
             http_response_code(400);
             echo json_encode(["error" => "Both parameters are the same user"]);
-            return false;
+            exit;
         }
 
         try {
@@ -100,25 +107,76 @@ class MessageService {
             return false;
         }
 
+        $messages = [
+            "sent_from" => [],
+            "received_by" => []
+        ];
+
+        while ($row = $recived_result->fetch_assoc()) {
+            array_push($messages['received_by'], $row);
+        }
+
+        // Fetch sent messages
+        while ($row = $sent_result->fetch_assoc()) {
+            array_push($messages['sent_from'], $row);
+        }
+
+        if (empty($messages['received_by']) && empty($messages['sent_from'])) {
+            // Debug: Check if headers are already sent
+            if (headers_sent($file, $line)) {
+                json_encode(error_log("Headers already sent in $file on line $line"));
+            }
+
+            http_response_code(204);
+//            echo json_encode(["Invalid parameters!"]);
+
+            exit;
+        } else {
+            $json_data = json_encode($messages, JSON_PRETTY_PRINT);
+
+            file_put_contents("messages.json", $json_data, FILE_APPEND);
+            echo $json_data;
+            http_response_code(200);
+        }
+        return true;
     }
 
     //This is creating a message insertion into the database
-    function POST($source, $target, $message) {
-        //if there are incorrect parameters passed through it, it throws a 400 status code
-        if (empty($source) || empty($target) || empty($message)) {
-            http_response_code(400);
-            echo json_encode(["Invalid parameters!"]);
-            return false;
+    function POST() {
+        // Read the raw input stream
+        $input = file_get_contents('php://input');
+        $data = json_decode($input, true);
+
+        $data_fields = ['source', 'target', 'message'];
+        // Check if all required fields are present in the JSON input
+        $data_num = 0;
+        foreach ($data_fields as $field) {;
+            $data_num ++;
+            if (!isset($data[$field]) && empty($data[$field])) {
+                http_response_code(400);
+                echo json_encode(["error" => "Missing field: $field"]);
+                exit;
+            }
         }
-        try{
-            $stmnt = $this->conn->prepare("INSERT INTO message (target, source, text)
-      VALUES(?, ?, ?)");
+        if (count($data) > count($data_fields)) {
+            http_response_code(400);
+            echo json_encode(["error" => "Too many fields!"]);
+            exit;
+        }
+
+
+        $source = $data['source'];
+        $target = $data['target'];
+        $message = $data['message'];
+
+        try {
+            $stmnt = $this->conn->prepare("INSERT INTO message (target, source, text) VALUES(?, ?, ?)");
             $stmnt->bind_param("sss", $target, $source, $message);
             $stmnt->execute();
 
             //if the message is made and has been inserted into the database then it throws a 201 status code
             if ($stmnt->affected_rows > 0) {
-                $check_stmt  = $this->conn->prepare("SELECT LAST_INSERT_ID();");
+                $check_stmt = $this->conn->prepare("SELECT LAST_INSERT_ID();");
                 $check_stmt->execute();
                 $check_results = $check_stmt->get_result();
                 $id = $check_results->fetch_assoc();
@@ -150,12 +208,25 @@ if (!$db->get_connection()) {
 $message = new MessageService($db);
 
 
-//checks if the method is GET or POST and calls a certain method depending on which one it is
 if ($method == 'GET') {
-    $source = isset($_GET['source']) ? $_GET['source'] : null;
-    $target = isset($_GET['target']) ? $_GET['target'] : null;
-    $message->GET($source, $target);
+    try{
+        $message->GET($_GET['source'], target: $_GET['target']);
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(["error" => $e->getMessage()]);
+    }
 } else {
-    $message->POST($_GET['source'], $_GET['target'], $_GET['message']);
+    try {
+        $message->POST();
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(["error" => $e->getMessage()]);
+    }
 }
+
+//$message->POST("woman", "man", "This is a message");
+// $message->GET("man", "women");
+
+//$conn->GET("blah", "blah");
+
 ?>
