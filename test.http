@@ -1,27 +1,5 @@
 // Test cases for the REST API
 
-// Test GET requests
-
-### Test GET request - Valid source and target
-GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user1&target=user2
-Content-Type: application/json
-
-### Test GET request - Missing source parameter
-GET https://ss2979.brighton.domains/CI527/REST_API/api.php?target=user2
-Content-Type: application/json
-
-### Test GET request - Missing target parameter
-GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user1
-Content-Type: application/json
-
-### Test GET request - Both source and target missing
-GET https://ss2979.brighton.domains/CI527/REST_API/api.php
-Content-Type: application/json
-
-### Test GET - extra parameters
-GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user1&target=user2&extra_param=This should be ignored
-Content-Type: application/json
-
 
 // Test POST requests
 
@@ -32,6 +10,16 @@ Content-Type: application/json
 {
   "source": "user1",
   "target": "user2",
+  "message": "Hello, this is a valid test message!"
+}
+
+### Test POST request - Valid data (swapped target and source)
+POST https://ss2979.brighton.domains/CI527/REST_API/api.php
+Content-Type: application/json
+
+{
+  "source": "user2",
+  "target": "user1",
   "message": "Hello, this is a valid test message!"
 }
 
@@ -62,6 +50,8 @@ Content-Type: application/json
   "target": "user2"
 }
 
+
+//we have an issue here
 ### Test POST request - Empty body
 POST https://ss2979.brighton.domains/CI527/REST_API/api.php
 Content-Type: application/json
@@ -108,6 +98,30 @@ POST https://ss2979.brighton.domains/CI527/REST_API/api.php
 Content-Type: application/x-www-form-urlencoded
 
 source=user1&target=user2&message=This is a non-JSON body
+
+// Test GET requests
+
+### Test GET request - Valid source and target
+GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user1&target=user2
+Content-Type: application/json
+
+### Test GET request - Missing source parameter
+GET https://ss2979.brighton.domains/CI527/REST_API/api.php?target=user2
+Content-Type: application/json
+
+### Test GET request - Missing target parameter
+GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user2
+Content-Type: application/json
+
+### Test GET request - Both source and target missing
+GET https://ss2979.brighton.domains/CI527/REST_API/api.php
+Content-Type: application/json
+
+### Test GET - extra parameters
+GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user1&target=user2&extra_param=This should be ignored
+Content-Type: application/json
+
+// this post is last because the invalid json messes with the rest of the tests (syntax error)
 
 ### Test POST request - Invalid JSON format
 POST https://ss2979.brighton.domains/CI527/REST_API/api.php

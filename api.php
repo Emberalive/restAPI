@@ -17,7 +17,7 @@ if ($method == 'POST' && strpos($content_type, 'application/json') === false) {
     echo json_encode(["error" => "Content-Type must be application/json"]);
     exit;
 }
-class db_access {
+class DBAccess {
     private $host = "165.227.235.122";
     private $user = "ss2979_samuel";
     private $pass = "QwErTy1243!";
@@ -31,6 +31,7 @@ class db_access {
         } catch (mysqli_sql_exception $e) {
             http_response_code(500);
             echo json_encode(["error" => $e->getMessage()]);
+            exit;
         }
     }
 
@@ -51,7 +52,7 @@ class db_access {
 }
 class MessageService {
     private $conn;
-    function __construct(DBAaccess $dbConnection){
+    function __construct(DBAccess $dbConnection){
         $this->conn = $dbConnection->get_connection();
     }
 
@@ -106,39 +107,6 @@ class MessageService {
             echo json_encode(["error" => $e->getMessage()]);
             return false;
         }
-
-        $messages = [
-            "sent_from" => [],
-            "received_by" => []
-        ];
-
-        while ($row = $recived_result->fetch_assoc()) {
-            array_push($messages['received_by'], $row);
-        }
-
-        // Fetch sent messages
-        while ($row = $sent_result->fetch_assoc()) {
-            array_push($messages['sent_from'], $row);
-        }
-
-        if (empty($messages['received_by']) && empty($messages['sent_from'])) {
-            // Debug: Check if headers are already sent
-            if (headers_sent($file, $line)) {
-                json_encode(error_log("Headers already sent in $file on line $line"));
-            }
-
-            http_response_code(204);
-//            echo json_encode(["Invalid parameters!"]);
-
-            exit;
-        } else {
-            $json_data = json_encode($messages, JSON_PRETTY_PRINT);
-
-            file_put_contents("messages.json", $json_data, FILE_APPEND);
-            echo $json_data;
-            http_response_code(200);
-        }
-        return true;
     }
 
     //This is creating a message insertion into the database
@@ -198,10 +166,11 @@ class MessageService {
 }
 
 //creates a new db_access class and kills it if there is no connection available
-$db = new DBAaccess();
+$db = new DBAccess();
 if (!$db->get_connection()) {
     http_response_code(500);
     die(json_encode(['ERROR' =>"DB connection failed!"]));
+    exit;
 }
 
 //creating a new messageClass and passing through the db class as a parameter
