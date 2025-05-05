@@ -188,7 +188,7 @@ $message = new MessageService($db);
 if ($method == 'GET') {
     try{
         //handle GET request
-        $message->GET($_GET['source'], target: $_GET['target']);
+        $message->GET($_GET['source'], $_GET['target']);
     } catch (Exception $e) {
         http_response_code(500);
         echo json_encode(["error" => $e->getMessage()]);
