@@ -13,10 +13,19 @@ if (!in_array($method, ['GET', 'POST'])) {
 }
 
 $content_type = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
-if ($method == 'POST' && strpos($content_type, 'application/json') === false) {
-    http_response_code(415); // Unsupported Media Type
-    echo json_encode(["error" => "Content-Type must be application/json"]);
-    exit;
+//checking the content type of the request
+if ($method == 'POST') {
+    if (empty($content_type)) {
+        http_response_code(400); // Bad Request
+        echo json_encode(["error" => "Content-Type header is missing"]);
+        exit;
+    }
+
+    if ($content_type !== 'application/x-www-form-urlencoded' && $content_type !== 'application/json') {
+        http_response_code(415); // Unsupported Media Type
+        echo json_encode(["error" => "Content-Type must be application/x-www-form-urlencoded or application/json"]);
+        exit;
+    }
 }
 
 // Establish a connection to the database.
@@ -65,19 +74,11 @@ class MessageService {
     // - If only source is provided, fetch messages sent by the source.
     // - If only target is provided, fetch messages received by the target.
     // Return a 400 error if neither source or target is provided.
-    function GET($source, $target) {
-        //check if the user is empty, if so it throws a 400 status code
-        if (empty($source) && empty($target)) {
-            http_response_code(400);
-            echo json_encode(["error" => "At least one of source or target must be provided."]);
-            return false;
-        } else if ($target == $source) {
-            http_response_code(400);
-            echo json_encode(["error" => "Both parameters are the same user"]);
-            exit;
-        }
-
+    function GET() {
         try {
+            $source = $_GET['source'];
+            $target = $_GET['target'];
+
             $messages = [];
 
             if (!empty($source) && !empty($target)) {
@@ -123,35 +124,12 @@ class MessageService {
     }
 
     //This is creating a message insertion into the database
-    function POST($input, $data) {
-
-        $data_fields = ['source', 'target', 'message'];
-        // Check if all required fields are present in the JSON input
-        foreach ($data_fields as $field) {;
-            if (!isset($data[$field]) && empty($data[$field])) {
-                http_response_code(400);
-                echo json_encode(["error" => "Missing field: $field"]);
-                exit;
-            }
-        }
-        if (count($data) > count($data_fields)) {
-            http_response_code(400);
-            echo json_encode(["error" => "Too many fields!"]);
-            exit;
-        }
-
-
-        $source = $data['source'];
-        $target = $data['target'];
-        $message = $data['message'];
-
-        if ($target == $source) {
-            http_response_code(400);
-            echo json_encode(["error" => "Both parameters are the same user"]);
-            exit;
-        }
-
+    function POST() {        
         try {
+            $source = $_POST['source'];
+            $target = $_POST['target'];
+            $message = $_POST['message'];
+
             $stmnt = $this->conn->prepare("INSERT INTO message (target, source, text) VALUES(?, ?, ?)");
             $stmnt->bind_param("sss", $target, $source, $message);
             $stmnt->execute();
@@ -178,11 +156,6 @@ class MessageService {
             http_response_code(500);
             echo json_encode(["error" => $e->getMessage()]);
             return false;
-        } finally {
-            //close the statement
-            if (isset($stmnt)) {
-                $stmnt->close();
-            }
         }
     }
 }
@@ -200,23 +173,44 @@ $message = new MessageService($db);
 
 // Route the request based on the HTTP method.
 if ($method == 'GET') {
-    try{
-        //handle GET request
-        $message->GET($_GET['source'], $_GET['target']);
-    } catch (Exception $e) {
-        http_response_code(500);
-        echo json_encode(["error" => $e->getMessage()]);
-    }
+        //handle GET request        
+        $source = $_GET['source'];
+        $target = $_GET['target'];
+        //check if the user is empty, if so it throws a 400 status code
+        if (empty($source) && empty($target)) {
+            http_response_code(400);
+            echo json_encode(["error" => "At least one of source or target must be provided."]);
+        } else if ($target == $source) {
+            http_response_code(400);
+            echo json_encode(["error" => "Both parameters are the same user"]);
+        }else{
+            $message->GET();
+        }
 } else {
-    try {
-        //handle POST request
-        // Read the raw input stream
-        $input = file_get_contents('php://input');
-        $data = json_decode($input, true);
-        $message->POST($input, $data);
-    } catch (Exception $e) {
-        http_response_code(500);
-        echo json_encode(["error" => $e->getMessage()]);
+    //handle POST request
+    // $data = [$_POST['source'], $_POST['target'], $_POST['message']];
+
+    // $data_fields = ['source', 'target', 'message'];
+    // Check if all required fields are present in the JSON input
+    // foreach ($data_fields as $field) {;
+    //     if (!isset($data[$field])) {
+    //         http_response_code(400);
+    //         echo json_encode(["error" => "Missing field: $field"]);
+    //         exit;
+    //     }
+    // }
+    // if(count($data) > count($data_fields)) {
+    //     http_response_code(400);
+    //     echo json_encode(["error" => "Too many fields!"]);
+    //     exit;
+    // } else {
+        // $message->POST();
+    // }
+    if (empty($_POST['source']) || empty($_POST['target']) || empty($_POST['message']) || $_POST['source'] == $_POST['target']) {
+        http_response_code(400);
+        echo json_encode(["error" => "Missing field: source, target or message"]);
+    } else {
+        $message->POST();
     }
 }
 ?>
