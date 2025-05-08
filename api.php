@@ -53,16 +53,19 @@ class MessageService {
     // Return a 400 error if neither source or target is provided.
     function GET() {
         try {
+
+
+
             if (!isset($_GET["source"])) {
                 $source = "";
             } else {
-                $source = $_GET["source"];
+                $source = filter_var($_POST['source'], FILTER_SANITIZE_STRING);
             }
             if (!isset($_GET["target"])) {
                 $target = "";
             } else {
-                $target = $_GET["target"];
-            }
+                $target = filter_var($_POST['target'], FILTER_SANITIZE_STRING);            
+        }
 
             $messages = [];
 
@@ -98,7 +101,7 @@ class MessageService {
             return true;
         } catch (mysqli_sql_exception $e) {
             http_response_code(500);
-            return false;
+            exit;
         } finally {
             //close the statement
             if (isset($stmt)) {
@@ -109,9 +112,9 @@ class MessageService {
     //This is creating a message insertion into the database
     function POST() {        
         try {
-            $source = $_POST['source'];
-            $target = $_POST['target'];
-            $message = $_POST['message'];
+            $source = filter_var($_POST['source'], FILTER_SANITIZE_STRING);
+            $target = filter_var($_POST['target'], FILTER_SANITIZE_STRING);
+            $message = filter_var($_POST['message'], FILTER_SANITIZE_STRING);
 
             $stmnt = $this->conn->prepare("INSERT INTO message (target, source, text) VALUES(?, ?, ?)");
             $stmnt->bind_param("sss", $target, $source, $message);
@@ -133,19 +136,17 @@ class MessageService {
         } catch (mysqli_sql_exception $e){
             //if any of the select queries or database transactions fail, then it throws a 500 status code
             http_response_code(500);
-            return false;
+            exit;
         }
     }
 }
 
 class Main {
 
+    function __construct(MessageService $messages) {
 
-    function __construct() {
-        //better for debugging as i can see all levels of errors
-//        ini_set('display_errors', 0);
-//        error_reporting(E_ALL);
         // Entry point of the script
+        $this->messages = $messages;
 
         header('Content-Type: application/json');
 
@@ -155,15 +156,6 @@ class Main {
             http_response_code(405); // Method Not Allowed
             exit;
         }
-
-        $content_type = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
-
-
-        //creates a new db_access class
-        $db = new DBAccess();
-
-        //creating a new messageClass and passing through the db class as a parameter
-        $messages = new MessageService($db);
 
         // Route the request based on the HTTP method.
         if ($method == 'GET') {
@@ -191,14 +183,15 @@ class Main {
                 http_response_code(400);
             } else if ($messages->pattern_check($_POST['target']) || $messages->pattern_check($_POST['source'])) {
                 http_response_code(400);
-            }else {
+            } else {
                 $messages->POST();
             }
         }
 
     }
 }
-
-$main = new Main();
+$db = new DBAccess();
+$messages = new MessageService($db);
+$main = new Main($messages);
 
 ?>
