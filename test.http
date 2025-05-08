@@ -11,7 +11,7 @@ Content-Type: application/x-www-form-urlencoded
 
 source=user1
 &target=user2
-&message=Hello, this is a test message
+&message=message for invalid PUT request
 
 ### Test DELETE request - Not allowed (405)
 DELETE https://ss2979.brighton.domains/CI527/REST_API/api.php HTTP/1.1
@@ -19,7 +19,7 @@ Content-Type: application/x-www-form-urlencoded
 
 source=user1
 &target=user2
-&message=Hello, this is a test message
+&message=message for invalid DELETE request
 
 
 // Test POST requests
@@ -118,7 +118,15 @@ POST https://ss2979.brighton.domains/CI527/REST_API/api.php HTTP/1.1
 
 source=user1
 &target=user2
-&message=This is a test message
+&message=This is a test message without Content-Type header
+
+### Test POST request - Invalid Content-Type header (400)
+POST https://ss2979.brighton.domains/CI527/REST_API/api.php HTTP/1.1
+Content-Type: application/json
+
+source=user1
+&target=user2
+&message=This is a test message with invalid Content-Type header
 
 ### Test POST request - Empty string values (400)
 POST https://ss2979.brighton.domains/CI527/REST_API/api.php HTTP/1.1
@@ -170,6 +178,13 @@ Content-Type: application/json
 ### Test GET request - No messages found 
 GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user3&target=user4
 Content-Type: application/json
+
+### Test GET request - missing content header (400)
+GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user1&target=user2
+
+### Test GET request - invalid content header (400)
+GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user1&target=user2
+Content-Type: application/x-www-form-urlencoded
 
 // this post is last because the invalid json messes with the rest of the tests (syntax error)
 

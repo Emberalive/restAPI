@@ -156,29 +156,6 @@ class Main {
 
         $content_type = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
 
-        //checking the content type of the request
-        if ($method == 'POST') {
-            if (empty($content_type)) {
-                http_response_code(400); // Bad Request
-                echo json_encode(["error" => "Content-Type header is missing"]);
-                exit;
-            }
-
-            if ($content_type !== 'application/x-www-form-urlencoded') {
-                http_response_code(415); // Unsupported Media Type
-                echo json_encode(["error" => "Content-Type must be application/x-www-form-urlencoded"]);
-                exit;
-            }
-        } else {
-            if (empty($content_type)) {
-                http_response_code(400);
-                echo json_encode(["error" => "Content-Type header is missing"]);
-            }
-            if ($content_type !== 'application/json') {
-                http_response_code(415);
-                echo json_encode(["error" => "Content-Type must be application/json"]);
-            }
-        }
 
         //creates a new db_access class and kills it if there is no connection available
         $db = new DBAccess();
@@ -193,6 +170,13 @@ class Main {
 
         // Route the request based on the HTTP method.
         if ($method == 'GET') {
+            //checking the content type
+            if ($content_type !== 'application/json') {
+                http_response_code(415);
+                echo json_encode(["error" => "Content-Type must be application/json"]);
+                exit;
+            }
+
             //handle GET request
             $source = $_GET['source'];
             $target = $_GET['target'];
@@ -210,6 +194,12 @@ class Main {
                 $messages->GET();
             }
         } else {
+            //checking the content type
+            if ($content_type !== 'application/x-www-form-urlencoded') {
+                http_response_code(415); // Unsupported Media Type
+                echo json_encode(["error" => "Content-Type must be application/x-www-form-urlencoded"]);
+                exit;
+            }
             if (empty($_POST['source']) || empty($_POST['target']) || empty($_POST['message'])) {
                 http_response_code(400);
                 echo json_encode(["error" => "Missing field: source, target or message"]);
