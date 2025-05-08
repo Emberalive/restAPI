@@ -167,12 +167,6 @@ class Main {
 
         // Route the request based on the HTTP method.
         if ($method == 'GET') {
-            //checking the content type
-            if ($content_type !== 'application/json') {
-                http_response_code(415);
-                exit;
-            }
-
             //handle GET request
             if (!isset($_GET['target'])) {
                 $target = "";
@@ -195,11 +189,6 @@ class Main {
                 $messages->GET();
             }
         } else {
-            //checking the content type
-            if ($content_type !== 'application/x-www-form-urlencoded') {
-                http_response_code(415); // Unsupported Media Type
-                exit;
-            }
             if (empty($_POST['source']) || empty($_POST['target']) || empty($_POST['message'])) {
                 http_response_code(400);
             } else if ($messages->pattern_check($_POST['target']) || $messages->pattern_check($_POST['source'])) {

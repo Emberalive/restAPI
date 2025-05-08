@@ -6,7 +6,7 @@
 
 //Test for non allowed Methods
 ### Test PUT request - Not allowed (405)
-PUT https://ss2979.brighton.domains/CI527/REST_API/api.php HTTP/1.1
+PUT https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 source=user1
@@ -14,7 +14,7 @@ source=user1
 &message=message for invalid PUT request
 
 ### Test DELETE request - Not allowed (405)
-DELETE https://ss2979.brighton.domains/CI527/REST_API/api.php HTTP/1.1
+DELETE https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 source=user1
@@ -24,7 +24,7 @@ source=user1
 
 // Test POST requests
 ### Test POST request - Valid data (201)
-POST https://ss2979.brighton.domains/CI527/REST_API/api.php HTTP/1.1
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 source=user1
@@ -32,15 +32,15 @@ source=user1
 &message=Hello, this is a valid test message!
 
 ### Test POST request - Valid data (swapped target and source) (201)
-POST https://ss2979.brighton.domains/CI527/REST_API/api.php HTTP/1.1
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 source=user2
 &target=user1
-&message=Hello, this is a valid test message!
+&message=Hello, this is also a valid test message!
 
 ### Test POST request - SOURCE and TARGET are the same (400)
-POST https://ss2979.brighton.domains/CI527/REST_API/api.php HTTP/1.1
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 source=user1
@@ -48,7 +48,7 @@ source=user1
 &message=Hello, this is a test message with the same source and target
 
 ### POST request - special characters for target (400)
-POST https://ss2979.brighton.domains/CI527/REST_API/api.php HTTP/1.1
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 source=user1
@@ -56,7 +56,7 @@ source=user1
 &message=Hello, this is a test message with special characters
 
 ### POST request - special characters for source (400)
-POST https://ss2979.brighton.domains/CI527/REST_API/api.php HTTP/1.1
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 source=user1@!#
@@ -64,28 +64,28 @@ source=user1@!#
 &message=Hello, this is a test message with special characters
 
 ### Test POST request - Missing source (400)
-POST https://ss2979.brighton.domains/CI527/REST_API/api.php HTTP/1.1
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 target=user2
 &message=Missing source parameter
 
 ### Test POST request - Missing target (400)
-POST https://ss2979.brighton.domains/CI527/REST_API/api.php HTTP/1.1
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 source=user1
 &message=Missing target parameter
 
 ### Test POST request - Missing message (400)
-POST https://ss2979.brighton.domains/CI527/REST_API/api.php HTTP/1.1
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 source=user1
 &target=user2
 
 ### Test POST request - short usernames (400)
-POST https://ss2979.brighton.domains/CI527/REST_API/api.php HTTP/1.1
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 source=a
@@ -93,7 +93,7 @@ source=a
 &message=Hello, this is a test message with short usernames
 
 ### Test POST request - long usernames (400)
-POST https://ss2979.brighton.domains/CI527/REST_API/api.php HTTP/1.1
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 source=longusername1234567890123456789012345678901234567890
@@ -101,11 +101,11 @@ source=longusername1234567890123456789012345678901234567890
 &message=Hello, this is a test message with long usernames
 
 ### Test POST request - Empty body (400)
-POST https://ss2979.brighton.domains/CI527/REST_API/api.php HTTP/1.1
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 ### Test POST request - extra parameters (201)
-POST https://ss2979.brighton.domains/CI527/REST_API/api.php HTTP/1.1
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 source=user1
@@ -114,14 +114,14 @@ source=user1
 &extra_param=This should be ignored
 
 ### Test POST request - Missing Content-Type header (400)
-POST https://ss2979.brighton.domains/CI527/REST_API/api.php HTTP/1.1
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 
 source=user1
 &target=user2
 &message=This is a test message without Content-Type header
 
 ### Test POST request - Invalid Content-Type header (400)
-POST https://ss2979.brighton.domains/CI527/REST_API/api.php HTTP/1.1
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/json
 
 source=user1
@@ -129,7 +129,7 @@ source=user1
 &message=This is a test message with invalid Content-Type header
 
 ### Test POST request - Empty string values (400)
-POST https://ss2979.brighton.domains/CI527/REST_API/api.php HTTP/1.1
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
   source=
@@ -140,69 +140,59 @@ Content-Type: application/x-www-form-urlencoded
 // Test GET requests
 
 ### Test GET request - Valid source and target (200)
-GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user1&target=user2
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=user2
 Content-Type: application/json
 
 ### Test GET request - Missing source parameter (200)
-GET https://ss2979.brighton.domains/CI527/REST_API/api.php?target=user2
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?target=user2
 Content-Type: application/json
 
 ### Test GET request - Missing target parameter (200)
-GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user2
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user2
 Content-Type: application/json
 
 ### Test GET request - Both source and target missing (400)
-GET https://ss2979.brighton.domains/CI527/REST_API/api.php
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php
 Content-Type: application/json
 
 ### Test GET - extra parameters (200)
-GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user1&target=user2&extra_param=This should be ignored
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=user2&extra_param=This should be ignored
 Content-Type: application/json
 
 ### Test GET request - source and target are the same (400)
-GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user1&target=user1
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=user1
 Content-Type: application/json
 
 ### Test GET request - empty source (400)
-GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=&target=user2
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=&target=user2
 Content-Type: application/json
 
 ### Test GET request - empty target (400)
-GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user1&target=
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=
 Content-Type: application/json
 
 ### Test GET request - special characters in source (400)
-GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user1@!#&target=user2
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1@!#&target=user2
 Content-Type: application/json
 
 ### Test GET request - special characters in target (400)
-GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user1&target=user2@!#
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=user2@!#
 Content-Type: application/json
 
-
 ### Test GET request - long usernames (400)
-GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=longusername1234567890123456789012345678901234567890&target=longusername1234567890123456789012345678901234567890
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=longusername1234567890123456789012345678901234567890&target=longusername1234567890123456789012345678901234567890
 Content-Type: application/json
 
 ### Test GET request - short usernames (400)
-GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=a&target=b
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=a&target=b
 Content-Type: application/json
 
 ### Test GET request - No messages found 
-GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user3&target=user4
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user3&target=user4
 Content-Type: application/json
 
-### Test GET request - missing content header (400)
-GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user1&target=user2
-
-### Test GET request - invalid content header (400)
-GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user1&target=user2
-Content-Type: application/x-www-form-urlencoded
-
-// this post is last because the invalid json messes with the rest of the tests (syntax error)
-
 ### Test POST request - Invalid url-encoded format (400)
-POST https://ss2979.brighton.domains/CI527/REST_API/api.php
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php
 Content-Type: application/x-www-form-urlencoded
 
 source=user1
