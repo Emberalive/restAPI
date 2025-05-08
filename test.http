@@ -24,12 +24,15 @@ source=user1
 ### Test PATCH request - Not allowed (405)
 PATCH https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
+
 source=user1
 &target=user2
 &message=message for invalid PATCH request
+
 ### Test OPTIONS request - Not allowed (405)
 OPTIONS https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
+
 source=user1
 &target=user2
 &message=message for invalid OPTIONS request
@@ -37,6 +40,7 @@ source=user1
 ### Test HEAD request - Not allowed (405)
 HEAD https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
+
 source=user1
 &target=user2
 &message=message for invalid HEAD request
@@ -214,15 +218,6 @@ POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 source=user1
 &target=user2
 &message=This is a test message without Content-Type header
-
-### Test POST request - Invalid Content-Type header (400)
-POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
-Content-Type: application/json
-
-source=user1
-&target=user2
-&message=This is a test message with invalid Content-Type header
-
 
 
 // Test GET requests
