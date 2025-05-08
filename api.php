@@ -164,10 +164,19 @@ class Main {
                 exit;
             }
 
-            if ($content_type !== 'application/x-www-form-urlencoded' && $content_type !== 'application/json') {
+            if ($content_type !== 'application/x-www-form-urlencoded') {
                 http_response_code(415); // Unsupported Media Type
-                echo json_encode(["error" => "Content-Type must be application/x-www-form-urlencoded or application/json"]);
+                echo json_encode(["error" => "Content-Type must be application/x-www-form-urlencoded"]);
                 exit;
+            }
+        } else {
+            if (empty($content_type)) {
+                http_response_code(400);
+                echo json_encode(["error" => "Content-Type header is missing"]);
+            }
+            if ($content_type !== 'application/json') {
+                http_response_code(415);
+                echo json_encode(["error" => "Content-Type must be application/json"]);
             }
         }
 
