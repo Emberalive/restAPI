@@ -40,7 +40,7 @@ class MessageService {
     }
 
 
-    function pattern_check($param) {
+    function isValidPattern($param) {
         if ($param === "" || preg_match("/^[A-Za-z0-9]{4,16}$/", $param)) {
             return false;
         }
@@ -173,7 +173,7 @@ class Main {
 
             if (empty($source) && empty($target) || $source == $target) {
                 http_response_code(400);
-            } else if ($messages->pattern_check($source) || $messages->pattern_check($target)) {
+            } else if ($messages->isValidPattern($source) || $messages->isValidPattern($target)) {
                 http_response_code(400);
             } else {
                 $messages->GET();
@@ -181,7 +181,7 @@ class Main {
         } else {
             if (empty($_POST['source']) || empty($_POST['target']) || empty($_POST['message']) || $_POST['source'] == $_POST['target']) {
                 http_response_code(400);
-            } else if ($messages->pattern_check($_POST['target']) || $messages->pattern_check($_POST['source'])) {
+            } else if ($messages->isValidPattern($_POST['target']) || $messages->isValidPattern($_POST['source'])) {
                 http_response_code(400);
             } else {
                 $messages->POST();
