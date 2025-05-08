@@ -40,22 +40,30 @@ class MessageService {
         $this->conn = $dbConnection->get_connection();
     }
 
+
+    function pattern_check($param) {
+        if ($param === "" || preg_match("/^[A-Za-z0-9]{4,16}$/", $param)) {
+            return false;
+        }
+        return true;
+    }
     // Retrieve messages based on the source and/or target.
     // - If both source and target are provided, fetch messages between them.
     // - If only source is provided, fetch messages sent by the source.
     // - If only target is provided, fetch messages received by the target.
     // Return a 400 error if neither source or target is provided.
-    function pattern_check($subject) {
-        if (preg_match("/^[A-Za-z0-9]{4,16}$/", $subject)) {
-            return true;
-        }
-        return false;
-    }
-
     function GET() {
         try {
-            $source = $_GET['source'];
-            $target = $_GET['target'];
+            if (!isset($_GET["source"])) {
+                $source = "";
+            } else {
+                $source = $_GET["source"];
+            }
+            if (!isset($_GET["target"])) {
+                $target = "";
+            } else {
+                $target = $_GET["target"];
+            }
 
             $messages = [];
 
@@ -123,10 +131,6 @@ class MessageService {
                 ];
                 echo json_encode($response, JSON_PRETTY_PRINT);
                 return true;
-            } else {
-                //if it didnt make a database insertion then it throws a 500 status code
-                http_response_code(500);
-                return false;
             }
         } catch (mysqli_sql_exception $e){
             //if any of the select queries or database transactions fail, then it throws a 500 status code
@@ -141,9 +145,10 @@ class Main {
 
 
     function __construct() {
+        //better for debugging as i can see all levels of errors
+//        ini_set('display_errors', 0);
+//        error_reporting(E_ALL);
         // Entry point of the script
-        ini_set('display_errors', 0);
-        error_reporting(E_ALL);
 
         header('Content-Type: application/json');
 
@@ -157,13 +162,8 @@ class Main {
         $content_type = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
 
 
-        //creates a new db_access class and kills it if there is no connection available
+        //creates a new db_access class
         $db = new DBAccess();
-        if (!$db->get_connection()) {
-            http_response_code(500);
-            die(json_encode(['ERROR' =>"DB connection failed!"]));
-            exit;
-        }
 
         //creating a new messageClass and passing through the db class as a parameter
         $messages = new MessageService($db);
@@ -178,13 +178,21 @@ class Main {
             }
 
             //handle GET request
-            $source = $_GET['source'];
-            $target = $_GET['target'];
+            if (!isset($_GET['target'])) {
+                $target = "";
+            } else {
+                $target = $_GET['target'];
+            }
+            if (!isset($_GET['source'])) {
+                $source = "";
+            } else {
+                $source = $_GET['source'];
+            }
 
             if (empty($source) && empty($target)) {
                 http_response_code(400);
                 echo json_encode(["error" => "At least one of source or target must be provided."]);
-            } else if (!$messages->pattern_check($source) && !$messages->pattern_check($target)) {
+            } else if ($messages->pattern_check($source) || $messages->pattern_check($target)) {
                 http_response_code(400);
                 echo json_encode(["error" => "Invalid message source/target"]);
             } else if ($target == $source) {
@@ -203,7 +211,7 @@ class Main {
             if (empty($_POST['source']) || empty($_POST['target']) || empty($_POST['message'])) {
                 http_response_code(400);
                 echo json_encode(["error" => "Missing field: source, target or message"]);
-            } else if (!$messages->pattern_check($_POST['target']) || !$messages->pattern_check($_POST['source'])) {
+            } else if ($messages->pattern_check($_POST['target']) || $messages->pattern_check($_POST['source'])) {
                 http_response_code(400);
                 echo json_encode(["error" => "cannot contain special characters, and needs to be between 4 - 16 characters."]);
             }else if ($_POST['source'] == $_POST['target']){
