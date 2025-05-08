@@ -175,6 +175,19 @@ Content-Type: application/json
 GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user1@!#&target=user2
 Content-Type: application/json
 
+### Test GET request - special characters in target (400)
+GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user1&target=user2@!#
+Content-Type: application/json
+
+
+### Test GET request - long usernames (400)
+GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=longusername1234567890123456789012345678901234567890&target=longusername1234567890123456789012345678901234567890
+Content-Type: application/json
+
+### Test GET request - short usernames (400)
+GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=a&target=b
+Content-Type: application/json
+
 ### Test GET request - No messages found 
 GET https://ss2979.brighton.domains/CI527/REST_API/api.php?source=user3&target=user4
 Content-Type: application/json

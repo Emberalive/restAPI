@@ -1,6 +1,0 @@
-I need to change it from json encoded POST requests to url encoded POST requests
-
-I need to test for an incorrect method type, attempt to request a PUT request or another type of CRUD request
-
-I need to double-check the date time layout and make sure that it is the correct way as said in the brief
-
