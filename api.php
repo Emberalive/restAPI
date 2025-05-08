@@ -179,23 +179,19 @@ class Main {
                 $source = $_GET['source'];
             }
 
-            if (empty($source) && empty($target)) {
+            if (empty($source) && empty($target) || $source == $target) {
                 http_response_code(400);
             } else if ($messages->pattern_check($source) || $messages->pattern_check($target)) {
                 http_response_code(400);
-            } else if ($target == $source) {
-                http_response_code(400);
-            }else{
+            } else {
                 $messages->GET();
             }
         } else {
-            if (empty($_POST['source']) || empty($_POST['target']) || empty($_POST['message'])) {
+            if (empty($_POST['source']) || empty($_POST['target']) || empty($_POST['message']) || $_POST['source'] == $_POST['target']) {
                 http_response_code(400);
             } else if ($messages->pattern_check($_POST['target']) || $messages->pattern_check($_POST['source'])) {
                 http_response_code(400);
-            }else if ($_POST['source'] == $_POST['target']){
-                http_response_code(400);
-            } else {
+            }else {
                 $messages->POST();
             }
         }

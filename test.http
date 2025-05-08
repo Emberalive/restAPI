@@ -111,9 +111,7 @@ Content-Type: application/x-www-form-urlencoded
 source=user1
 &target=user2
 &message=Hello, this is a valid test message!
-&extra_param=This should be ignored
-
-### Test POST request - Missing Content-Type header (400)
+&extra_param=This should be ignored### Test POST request - Missing Content-Type header (400)
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 
 source=user1
