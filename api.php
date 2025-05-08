@@ -74,6 +74,13 @@ class MessageService {
     // - If only source is provided, fetch messages sent by the source.
     // - If only target is provided, fetch messages received by the target.
     // Return a 400 error if neither source or target is provided.
+    function pattern_check($subject) {
+        if (preg_match("/^[A-Za-z0-9]{4,16}$/", $subject)) {
+            return true;
+        }
+        return false;
+    }
+
     function GET() {
         try {
             $source = $_GET['source'];
@@ -122,7 +129,6 @@ class MessageService {
             }
         }
     }
-
     //This is creating a message insertion into the database
     function POST() {        
         try {
@@ -153,8 +159,8 @@ class MessageService {
             }
         } catch (mysqli_sql_exception $e){
             //if any of the select queries or database transactions fail, then it throws a 500 status code
-            http_response_code(500);
             echo json_encode(["error" => $e->getMessage()]);
+            http_response_code(500);
             return false;
         }
     }
@@ -173,10 +179,10 @@ $message = new MessageService($db);
 
 // Route the request based on the HTTP method.
 if ($method == 'GET') {
-        //handle GET request        
+        //handle GET request
         $source = $_GET['source'];
         $target = $_GET['target'];
-        //check if the user is empty, if so it throws a 400 status code
+
         if (empty($source) && empty($target)) {
             http_response_code(400);
             echo json_encode(["error" => "At least one of source or target must be provided."]);
@@ -187,28 +193,15 @@ if ($method == 'GET') {
             $message->GET();
         }
 } else {
-    //handle POST request
-    // $data = [$_POST['source'], $_POST['target'], $_POST['message']];
-
-    // $data_fields = ['source', 'target', 'message'];
-    // Check if all required fields are present in the JSON input
-    // foreach ($data_fields as $field) {;
-    //     if (!isset($data[$field])) {
-    //         http_response_code(400);
-    //         echo json_encode(["error" => "Missing field: $field"]);
-    //         exit;
-    //     }
-    // }
-    // if(count($data) > count($data_fields)) {
-    //     http_response_code(400);
-    //     echo json_encode(["error" => "Too many fields!"]);
-    //     exit;
-    // } else {
-        // $message->POST();
-    // }
-    if (empty($_POST['source']) || empty($_POST['target']) || empty($_POST['message']) || $_POST['source'] == $_POST['target']) {
+    if (empty($_POST['source']) || empty($_POST['target']) || empty($_POST['message'])) {
         http_response_code(400);
         echo json_encode(["error" => "Missing field: source, target or message"]);
+    } else if (!$message->pattern_check($_POST['target']) || !$message->pattern_check($_POST['source'])) {
+        http_response_code(400);
+        echo json_encode(["error" => "cannot contain special characters, and needs to be between 4 - 16 characters."]);
+    }else if ($_POST['source'] == $_POST['target']){
+        http_response_code(400);
+        echo json_encode(["error" => "Both parameters are the same user"]);
     } else {
         $message->POST();
     }
