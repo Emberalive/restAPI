@@ -13,7 +13,6 @@ class DBAccess {
             $this->conn = new mysqli($this->host, $this->user, $this->pass, $this->db);
         } catch (mysqli_sql_exception $e) {
             http_response_code(500);
-            echo json_encode(["error" => $e->getMessage()]);
             exit;
         }
     }
@@ -99,7 +98,6 @@ class MessageService {
             return true;
         } catch (mysqli_sql_exception $e) {
             http_response_code(500);
-            echo json_encode(["error" => $e->getMessage()]);
             return false;
         } finally {
             //close the statement
@@ -134,7 +132,6 @@ class MessageService {
             }
         } catch (mysqli_sql_exception $e){
             //if any of the select queries or database transactions fail, then it throws a 500 status code
-            echo json_encode(["error" => $e->getMessage()]);
             http_response_code(500);
             return false;
         }
@@ -173,7 +170,6 @@ class Main {
             //checking the content type
             if ($content_type !== 'application/json') {
                 http_response_code(415);
-                echo json_encode(["error" => "Content-Type must be application/json"]);
                 exit;
             }
 
@@ -191,13 +187,10 @@ class Main {
 
             if (empty($source) && empty($target)) {
                 http_response_code(400);
-                echo json_encode(["error" => "At least one of source or target must be provided."]);
             } else if ($messages->pattern_check($source) || $messages->pattern_check($target)) {
                 http_response_code(400);
-                echo json_encode(["error" => "Invalid message source/target"]);
             } else if ($target == $source) {
                 http_response_code(400);
-                echo json_encode(["error" => "Both parameters are the same user"]);
             }else{
                 $messages->GET();
             }
@@ -205,18 +198,14 @@ class Main {
             //checking the content type
             if ($content_type !== 'application/x-www-form-urlencoded') {
                 http_response_code(415); // Unsupported Media Type
-                echo json_encode(["error" => "Content-Type must be application/x-www-form-urlencoded"]);
                 exit;
             }
             if (empty($_POST['source']) || empty($_POST['target']) || empty($_POST['message'])) {
                 http_response_code(400);
-                echo json_encode(["error" => "Missing field: source, target or message"]);
             } else if ($messages->pattern_check($_POST['target']) || $messages->pattern_check($_POST['source'])) {
                 http_response_code(400);
-                echo json_encode(["error" => "cannot contain special characters, and needs to be between 4 - 16 characters."]);
             }else if ($_POST['source'] == $_POST['target']){
                 http_response_code(400);
-                echo json_encode(["error" => "Both parameters are the same user"]);
             } else {
                 $messages->POST();
             }
