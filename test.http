@@ -21,6 +21,26 @@ source=user1
 &target=user2
 &message=message for invalid DELETE request
 
+### Test PATCH request - Not allowed (405)
+PATCH https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+source=user1
+&target=user2
+&message=message for invalid PATCH request
+### Test OPTIONS request - Not allowed (405)
+OPTIONS https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+source=user1
+&target=user2
+&message=message for invalid OPTIONS request
+
+### Test HEAD request - Not allowed (405)
+HEAD https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+source=user1
+&target=user2
+&message=message for invalid HEAD request
+
 
 // Test POST requests
 ### Test POST request - Valid data (201)
@@ -84,6 +104,25 @@ Content-Type: application/x-www-form-urlencoded
 source=user1
 &target=user2
 
+### Test POST request - Missing target and message (400)
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+source=user1
+
+### Test POST request - Missing source and message (400)
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+target=user2
+
+### Test POST request - Missing source and target (400)
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+message=Hello, this is a test message with missing source and target
+
+
 ### Test POST request - short usernames (400)
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
@@ -91,6 +130,23 @@ Content-Type: application/x-www-form-urlencoded
 source=a
 &target=b
 &message=Hello, this is a test message with short usernames
+
+### Test POST request - short soure (400)
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+source=a
+&target=user2
+&message=Hello, this is a test message with short source username
+
+### Test POST request - short target (400)
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+source=user1
+&target=b
+&message=Hello, this is a test message with short target username
+
 
 ### Test POST request - long usernames (400)
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
@@ -100,9 +156,50 @@ source=longusername1234567890123456789012345678901234567890
 &target=longusername1234567890123456789012345678901234567890
 &message=Hello, this is a test message with long usernames
 
+### Test POST request - long soure (400)
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+source=longusername1234567890123456789012345678901234567890
+&target=user2
+&message=Hello, this is a test message with long source username
+
+### Test POST request - long target (400)
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+source=user1
+&target=longusername1234567890123456789012345678901234567890
+&message=Hello, this is a test message with long target username
+
+
 ### Test POST request - Empty body (400)
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
+
+### Test POST request - empty source (400)
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+source=
+&target=user2
+&message=Hello, this is a test message with empty source
+
+### Test POST request - empty target (400)
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+source=user1
+&target=
+&message=Hello, this is a test message with empty target
+
+### Test POST request - Empty string values (400)
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+  source=
+  &target=
+  &message=
 
 ### Test POST request - extra parameters (201)
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
@@ -126,13 +223,6 @@ source=user1
 &target=user2
 &message=This is a test message with invalid Content-Type header
 
-### Test POST request - Empty string values (400)
-POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
-Content-Type: application/x-www-form-urlencoded
-
-  source=
-  &target=
-  &message=
 
 
 // Test GET requests
@@ -169,6 +259,11 @@ Content-Type: application/json
 GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=
 Content-Type: application/json
 
+### Test GET request - empty source and target (400)
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=&target=
+Content-Type: application/json
+
+
 ### Test GET request - special characters in source (400)
 GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1@!#&target=user2
 Content-Type: application/json
@@ -177,12 +272,32 @@ Content-Type: application/json
 GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=user2@!#
 Content-Type: application/json
 
+### Test GET request - special characters in both source and target (400)
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1@!#&target=user2@!#
+Content-Type: application/json
+
 ### Test GET request - long usernames (400)
 GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=longusername1234567890123456789012345678901234567890&target=longusername1234567890123456789012345678901234567890
 Content-Type: application/json
 
+### Test GET request - long source (400)
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=longusername1234567890123456789012345678901234567890&target=user2
+Content-Type: application/json
+
+### Test GET request - long target (400)
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=longusername1234567890123456789012345678901234567890
+Content-Type: application/json
+
 ### Test GET request - short usernames (400)
 GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=a&target=b
+Content-Type: application/json
+
+### GET request - short source (400)
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=a&target=user2
+Content-Type: application/json
+
+### GET request - short target (400)
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=b
 Content-Type: application/json
 
 ### Test GET request - No messages found 

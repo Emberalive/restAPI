@@ -171,7 +171,7 @@ class Main {
                 $source = $_GET['source'];
             }
 
-            if (empty($source) && empty($target) || $source == $target) {
+            if ((empty($source) && empty($target) || $source == $target) || ($messages->isValidPattern($source) || $messages->isValidPattern($target))) {
                 http_response_code(400);
             } else if ($messages->isValidPattern($source) || $messages->isValidPattern($target)) {
                 http_response_code(400);
@@ -179,15 +179,12 @@ class Main {
                 $messages->GET();
             }
         } else {
-            if (empty($_POST['source']) || empty($_POST['target']) || empty($_POST['message']) || $_POST['source'] == $_POST['target']) {
-                http_response_code(400);
-            } else if ($messages->isValidPattern($_POST['target']) || $messages->isValidPattern($_POST['source'])) {
+            if (empty($_POST['source']) || empty($_POST['target']) || empty($_POST['message']) || ($_POST['source'] == $_POST['target'] ) || ($messages->isValidPattern($_POST['target']) || $messages->isValidPattern($_POST['source']))) {
                 http_response_code(400);
             } else {
                 $messages->POST();
             }
         }
-
     }
 }
 $db = new DBAccess();
