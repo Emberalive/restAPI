@@ -1,33 +1,4 @@
 <?php
-// Entry point of the script
-ini_set('display_errors', 0);
-error_reporting(E_ALL);
-
-header('Content-Type: application/json');
-
-//only allowing post and get requests
-$method = $_SERVER['REQUEST_METHOD'];
-if (!in_array($method, ['GET', 'POST'])) {
-   http_response_code(405); // Method Not Allowed
-   exit;
-}
-
-$content_type = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
-//checking the content type of the request
-if ($method == 'POST') {
-    if (empty($content_type)) {
-        http_response_code(400); // Bad Request
-        echo json_encode(["error" => "Content-Type header is missing"]);
-        exit;
-    }
-
-    if ($content_type !== 'application/x-www-form-urlencoded' && $content_type !== 'application/json') {
-        http_response_code(415); // Unsupported Media Type
-        echo json_encode(["error" => "Content-Type must be application/x-www-form-urlencoded or application/json"]);
-        exit;
-    }
-}
-
 // Establish a connection to the database.
 class DBAccess {
     private $host = "165.227.235.122";
@@ -166,44 +137,87 @@ class MessageService {
     }
 }
 
-//creates a new db_access class and kills it if there is no connection available
-$db = new DBAccess();
-if (!$db->get_connection()) {
-    http_response_code(500);
-    die(json_encode(['ERROR' =>"DB connection failed!"]));
-    exit;
-}
+class Main {
 
-//creating a new messageClass and passing through the db class as a parameter
-$message = new MessageService($db);
 
-// Route the request based on the HTTP method.
-if ($method == 'GET') {
-        //handle GET request
-        $source = $_GET['source'];
-        $target = $_GET['target'];
+    function __construct() {
+        // Entry point of the script
+        ini_set('display_errors', 0);
+        error_reporting(E_ALL);
 
-        if (empty($source) && empty($target)) {
-            http_response_code(400);
-            echo json_encode(["error" => "At least one of source or target must be provided."]);
-        } else if ($target == $source) {
-            http_response_code(400);
-            echo json_encode(["error" => "Both parameters are the same user"]);
-        }else{
-            $message->GET();
+        header('Content-Type: application/json');
+
+        //only allowing post and get requests
+        $method = $_SERVER['REQUEST_METHOD'];
+        if (!in_array($method, ['GET', 'POST'])) {
+            http_response_code(405); // Method Not Allowed
+            exit;
         }
-} else {
-    if (empty($_POST['source']) || empty($_POST['target']) || empty($_POST['message'])) {
-        http_response_code(400);
-        echo json_encode(["error" => "Missing field: source, target or message"]);
-    } else if (!$message->pattern_check($_POST['target']) || !$message->pattern_check($_POST['source'])) {
-        http_response_code(400);
-        echo json_encode(["error" => "cannot contain special characters, and needs to be between 4 - 16 characters."]);
-    }else if ($_POST['source'] == $_POST['target']){
-        http_response_code(400);
-        echo json_encode(["error" => "Both parameters are the same user"]);
-    } else {
-        $message->POST();
+
+        $content_type = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
+
+        //checking the content type of the request
+        if ($method == 'POST') {
+            if (empty($content_type)) {
+                http_response_code(400); // Bad Request
+                echo json_encode(["error" => "Content-Type header is missing"]);
+                exit;
+            }
+
+            if ($content_type !== 'application/x-www-form-urlencoded' && $content_type !== 'application/json') {
+                http_response_code(415); // Unsupported Media Type
+                echo json_encode(["error" => "Content-Type must be application/x-www-form-urlencoded or application/json"]);
+                exit;
+            }
+        }
+
+        //creates a new db_access class and kills it if there is no connection available
+        $db = new DBAccess();
+        if (!$db->get_connection()) {
+            http_response_code(500);
+            die(json_encode(['ERROR' =>"DB connection failed!"]));
+            exit;
+        }
+
+        //creating a new messageClass and passing through the db class as a parameter
+        $messages = new MessageService($db);
+
+        // Route the request based on the HTTP method.
+        if ($method == 'GET') {
+            //handle GET request
+            $source = $_GET['source'];
+            $target = $_GET['target'];
+
+            if (empty($source) && empty($target)) {
+                http_response_code(400);
+                echo json_encode(["error" => "At least one of source or target must be provided."]);
+            } else if (!$messages->pattern_check($source) && !$messages->pattern_check($target)) {
+                http_response_code(400);
+                echo json_encode(["error" => "Invalid message source/target"]);
+            } else if ($target == $source) {
+                http_response_code(400);
+                echo json_encode(["error" => "Both parameters are the same user"]);
+            }else{
+                $messages->GET();
+            }
+        } else {
+            if (empty($_POST['source']) || empty($_POST['target']) || empty($_POST['message'])) {
+                http_response_code(400);
+                echo json_encode(["error" => "Missing field: source, target or message"]);
+            } else if (!$messages->pattern_check($_POST['target']) || !$messages->pattern_check($_POST['source'])) {
+                http_response_code(400);
+                echo json_encode(["error" => "cannot contain special characters, and needs to be between 4 - 16 characters."]);
+            }else if ($_POST['source'] == $_POST['target']){
+                http_response_code(400);
+                echo json_encode(["error" => "Both parameters are the same user"]);
+            } else {
+                $messages->POST();
+            }
+        }
+
     }
 }
+
+$main = new Main();
+
 ?>
