@@ -53,18 +53,15 @@ class MessageService {
     // Return a 400 error if neither source or target is provided.
     function GET() {
         try {
-
-
-
             if (!isset($_GET["source"])) {
                 $source = "";
             } else {
-                $source = filter_var($_POST['source'], FILTER_SANITIZE_STRING);
+                $source = $_GET['source'];
             }
             if (!isset($_GET["target"])) {
                 $target = "";
             } else {
-                $target = filter_var($_POST['target'], FILTER_SANITIZE_STRING);            
+                $target = $_GET['target'];
         }
 
             $messages = [];
@@ -112,9 +109,9 @@ class MessageService {
     //This is creating a message insertion into the database
     function POST() {        
         try {
-            $source = filter_var($_POST['source'], FILTER_SANITIZE_STRING);
-            $target = filter_var($_POST['target'], FILTER_SANITIZE_STRING);
-            $message = filter_var($_POST['message'], FILTER_SANITIZE_STRING);
+            $source = $_POST['source'];
+            $target = $_POST['target'];
+            $message = $_POST['message'];
 
             $stmnt = $this->conn->prepare("INSERT INTO message (target, source, text) VALUES(?, ?, ?)");
             $stmnt->bind_param("sss", $target, $source, $message);
@@ -172,8 +169,6 @@ class Main {
             }
 
             if ((empty($source) && empty($target) || $source == $target) || ($messages->isValidPattern($source) || $messages->isValidPattern($target))) {
-                http_response_code(400);
-            } else if ($messages->isValidPattern($source) || $messages->isValidPattern($target)) {
                 http_response_code(400);
             } else {
                 $messages->GET();

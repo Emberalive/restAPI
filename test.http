@@ -47,6 +47,7 @@ source=user1
 
 
 // Test POST requests
+
 ### Test POST request - Valid data (201)
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
@@ -71,19 +72,19 @@ source=user1
 &target=user1
 &message=Hello, this is a test message with the same source and target
 
-### POST request - special characters for target (400)
+### Test POST request - special characters for target (400)
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 source=user1
-&target=user2@!#
+&target=user2@    !#
 &message=Hello, this is a test message with special characters
 
-### POST request - special characters for source (400)
+### Test POST request - special characters for source (400)
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
-source=user1@!#
+source=user1@!    #
 &target=user2
 &message=Hello, this is a test message with special characters
 
@@ -246,11 +247,11 @@ Content-Type: application/json
 GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=user1
 Content-Type: application/json
 
-### Test GET request - empty source (400)
+### Test GET request - empty source (200)
 GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=&target=user2
 Content-Type: application/json
 
-### Test GET request - empty target (400)
+### Test GET request - empty target (200)
 GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=
 Content-Type: application/json
 
@@ -264,11 +265,11 @@ GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1@!#&ta
 Content-Type: application/json
 
 ### Test GET request - special characters in target (400)
-GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=user2@!#
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=user2@!#    
 Content-Type: application/json
 
 ### Test GET request - special characters in both source and target (400)
-GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1@!#&target=user2@!#
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1@!#    &target=user    2@!#
 Content-Type: application/json
 
 ### Test GET request - long usernames (400)
@@ -287,11 +288,11 @@ Content-Type: application/json
 GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=a&target=b
 Content-Type: application/json
 
-### GET request - short source (400)
+### Test GET request - short source (400)
 GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=a&target=user2
 Content-Type: application/json
 
-### GET request - short target (400)
+### Test GET request - short target (400)
 GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=b
 Content-Type: application/json
 
