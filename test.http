@@ -73,7 +73,11 @@ source=user1
 // 2. POST Request Validation
 // ==========================
 
-### Test POST request - Valid data (201)
+
+//===========================
+// 2.1 POST Request - valid data
+
+### Test POST request - Valid data 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
@@ -85,7 +89,7 @@ source=user1
 //HTTP/1.1 201 Created
 //Response body: JSON object with message id
 
-### Test POST request - Valid data (swapped target and source) (201)
+### Test POST request - Valid data (swapped target and source) 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
@@ -97,7 +101,12 @@ source=user2
 //HTTP/1.1 201 Created
 //Response body: JSON object with message id
 
-### Test POST request - SOURCE and TARGET are the same (400)
+//===========================
+
+//===========================
+// 2.2 POST Request - invalid data
+
+### Test POST request - SOURCE and TARGET are the same 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
@@ -109,7 +118,7 @@ source=user1
 //HTTP/1.1 400 Bad Request
 //Response body: -- empty --
 
-### Test POST request - special characters for target (400)
+### Test POST request - special characters for target 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
@@ -121,7 +130,7 @@ source=user1
 //HTTP/1.1 400 Bad Request
 //Response body: -- empty --
 
-### Test POST request - special characters for source (400)
+### Test POST request - special characters for source 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
@@ -133,70 +142,7 @@ source=user1@!    #
 //HTTP/1.1 400 Bad Request
 //Response body: -- empty --
 
-### Test POST request - Missing source (400)
-POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
-Content-Type: application/x-www-form-urlencoded
-
-target=user2
-&message=Missing source parameter
-
-//Expected Result:
-//HTTP/1.1 400 Bad Request
-//Response body: -- empty --
-
-### Test POST request - Missing target (400)
-POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
-Content-Type: application/x-www-form-urlencoded
-
-source=user1
-&message=Missing target parameter
-
-//Expected Result:
-//HTTP/1.1 400 Bad Request
-//Response body: -- empty --
-
-### Test POST request - Missing message (400)
-POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
-Content-Type: application/x-www-form-urlencoded
-
-source=user1
-&target=user2
-
-//Expected Result:
-//HTTP/1.1 400 Bad Request
-//Response body: -- empty --
-
-### Test POST request - Missing target and message (400)
-POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
-Content-Type: application/x-www-form-urlencoded
-
-source=user1
-
-//Expected Result:
-//HTTP/1.1 400 Bad Request
-//Response body: -- empty --
-
-### Test POST request - Missing source and message (400)
-POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
-Content-Type: application/x-www-form-urlencoded
-
-target=user2
-
-//Expected Result:
-//HTTP/1.1 400 Bad Request
-//Response body: -- empty --
-
-### Test POST request - Missing source and target (400)
-POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
-Content-Type: application/x-www-form-urlencoded
-
-message=Hello, this is a test message with missing source and target
-
-//Expected Result:
-//HTTP/1.1 400 Bad Request
-//Response body: -- empty --
-
-### Test POST request - short usernames (400)
+### Test POST request - short usernames 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
@@ -208,7 +154,7 @@ source=a
 //HTTP/1.1 400 Bad Request
 //Response body: -- empty --
 
-### Test POST request - short source (400)
+### Test POST request - short source 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
@@ -220,7 +166,7 @@ source=a
 //HTTP/1.1 400 Bad Request
 //Response body: -- empty --
 
-### Test POST request - short target (400)
+### Test POST request - short target 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
@@ -233,7 +179,7 @@ source=user1
 //Response body: -- empty --
 
 
-### Test POST request - long usernames (400)
+### Test POST request - long usernames 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
@@ -245,7 +191,7 @@ source=longusername1234567890123456789012345678901234567890
 //HTTP/1.1 400 Bad Request
 //Response body: -- empty --
 
-### Test POST request - long source (400)
+### Test POST request - long source 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
@@ -257,7 +203,7 @@ source=longusername1234567890123456789012345678901234567890
 //HTTP/1.1 400 Bad Request
 //Response body: -- empty --
 
-### Test POST request - long target (400)
+### Test POST request - long target 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
@@ -269,8 +215,75 @@ source=user1
 //HTTP/1.1 400 Bad Request
 //Response body: -- empty --
 
+//===========================
 
-### Test POST request - Empty body (400)
+//===========================
+// 2.3 POST Request - missing parameters
+
+### Test POST request - Missing source 
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+target=user2
+&message=Missing source parameter
+
+//Expected Result:
+//HTTP/1.1 400 Bad Request
+//Response body: -- empty --
+
+### Test POST request - Missing target 
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+source=user1
+&message=Missing target parameter
+
+//Expected Result:
+//HTTP/1.1 400 Bad Request
+//Response body: -- empty --
+
+### Test POST request - Missing message 
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+source=user1
+&target=user2
+
+//Expected Result:
+//HTTP/1.1 400 Bad Request
+//Response body: -- empty --
+
+### Test POST request - Missing target and message 
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+source=user1
+
+//Expected Result:
+//HTTP/1.1 400 Bad Request
+//Response body: -- empty --
+
+### Test POST request - Missing source and message 
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+target=user2
+
+//Expected Result:
+//HTTP/1.1 400 Bad Request
+//Response body: -- empty --
+
+### Test POST request - Missing source and target 
+POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+message=Hello, this is a test message with missing source and target
+
+//Expected Result:
+//HTTP/1.1 400 Bad Request
+//Response body: -- empty --
+
+### Test POST request - Empty body 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
@@ -278,7 +291,12 @@ Content-Type: application/x-www-form-urlencoded
 //HTTP/1.1 400 Bad Request
 //Response body: -- empty --
 
-### Test POST request - empty source (400)
+//===========================
+
+//===========================
+//2.4 POST Request - empty values
+
+### Test POST request - empty source 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
@@ -290,7 +308,7 @@ source=
 //HTTP/1.1 400 Bad Request
 //Response body: -- empty --
 
-### Test POST request - empty target (400)
+### Test POST request - empty target 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
@@ -302,7 +320,7 @@ source=user1
 //HTTP/1.1 400 Bad Request
 //Response body: -- empty --
 
-### Test POST request - Empty string values (400)
+### Test POST request - all empty parameters 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
@@ -314,20 +332,25 @@ Content-Type: application/x-www-form-urlencoded
 //HTTP/1.1 400 Bad Request
 //Response body: -- empty --
 
-### Test POST request - extra parameters (201)
+//===========================
+
+//===========================
+//2.5 POST Request - edge cases
+
+### Test POST request - extra parameters 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 source=user1
 &target=user2
 &message=Hello, this is a valid test message!
-&extra_param=This should be ignored### Test POST request - Missing Content-Type header (400)
+&extra_param=This should be ignored### Test POST request - Missing Content-Type header 
 
 //Expected Result:
 //HTTP/1.1 201 Created
 //Response body: JSON object with message id
 
-### Test POST request - Missing Content-Type header (400)
+### Test POST request - Missing Content-Type header 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
 
 source=user1
@@ -338,166 +361,7 @@ source=user1
 //HTTP/1.1 400 Bad Request
 //Response body: -- empty --
 
-
-// ==========================
-// 3. GET Request Validation
-// ==========================
-
-### Test GET request - Valid source and target (200)
-GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=user2
-Content-Type: application/json
-
-//Expected Result:
-//HTTP/1.1 200 OK
-//Response body: JSON object with messages from user1 to user2
-
-### Test GET request - Missing source parameter (200)
-GET https://ss2979.brighton.domains/ci527/assignment2/api.php?target=user2
-Content-Type: application/json
-
-//Expected Result:
-//HTTP/1.1 200 OK
-//Response body: JSON object with messages from all users to user2
-
-### Test GET request - Missing target parameter (200)
-GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user2
-Content-Type: application/json
-
-//Expected Result:
-//HTTP/1.1 200 OK
-//Response body: JSON object with messages from user2 to all users
-
-### Test GET request - Both source and target missing (400)
-GET https://ss2979.brighton.domains/ci527/assignment2/api.php
-Content-Type: application/json
-
-//Expected Result:
-//HTTP/1.1 400 Bad Request
-//Response body: -- empty --
-
-### Test GET - extra parameters (200)
-GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=user2&extra_param=This should be ignored
-Content-Type: application/json
-
-//Expected Result:
-//HTTP/1.1 200 OK
-//Response body: JSON object with messages from user1 to user2
-
-### Test GET request - source and target are the same (400)
-GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=user1
-Content-Type: application/json
-
-//Expected Result:
-//HTTP/1.1 400 Bad Request
-//Response body: -- empty --
-
-### Test GET request - empty source (200)
-GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=&target=user2
-Content-Type: application/json
-
-//Expected Result:
-//HTTP/1.1 200 OK
-//Response body: JSON object with messages from all users to user2
-
-### Test GET request - empty target (200)
-GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=
-Content-Type: application/json
-
-//Expected Result:
-//HTTP/1.1 200 OK
-//Response body: JSON object with messages from user1 to all users
-
-### Test GET request - empty source and target (400)
-GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=&target=
-Content-Type: application/json
-
-//Expected Result:
-//HTTP/1.1 400 Bad Request
-//Response body: -- empty --
-
-
-### Test GET request - special characters in source (400)
-GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1@!#&target=user2
-Content-Type: application/json
-
-//Expected Result:
-//HTTP/1.1 400 Bad Request
-//Response body: -- empty --
-
-### Test GET request - special characters in target (400)
-GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=user2@!#    
-Content-Type: application/json
-
-//Expected Result:
-//HTTP/1.1 400 Bad Request
-//Response body: -- empty --
-
-### Test GET request - special characters in both source and target (400)
-GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1@!#    &target=user    2@!#
-Content-Type: application/json
-
-//Expected Result:
-//HTTP/1.1 400 Bad Request
-//Response body: -- empty --
-
-### Test GET request - long usernames (400)
-GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=longusername1234567890123456789012345678901234567890&target=longusername1234567890123456789012345678901234567890
-Content-Type: application/json
-
-//Expected Result:
-//HTTP/1.1 400 Bad Request
-//Response body: -- empty --
-
-### Test GET request - long source (400)
-GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=longusername1234567890123456789012345678901234567890&target=user2
-Content-Type: application/json
-
-//Expected Result:
-//HTTP/1.1 400 Bad Request
-//Response body: -- empty --
-
-### Test GET request - long target (400)
-GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=longusername1234567890123456789012345678901234567890
-Content-Type: application/json
-
-//Expected Result:
-//HTTP/1.1 400 Bad Request
-//Response body: -- empty --
-
-### Test GET request - short usernames (400)
-GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=a&target=b
-Content-Type: application/json
-
-//Expected Result:
-//HTTP/1.1 400 Bad Request
-//Response body: -- empty --
-
-### Test GET request - short source (400)
-GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=a&target=user2
-Content-Type: application/json
-
-//Expected Result:
-//HTTP/1.1 400 Bad Request
-//Response body: -- empty --
-
-### Test GET request - short target (400)
-GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=b
-Content-Type: application/json
-
-//Expected Result:
-//HTTP/1.1 400 Bad Request
-//Response body: -- empty --
-
-### Test GET request - No messages found 
-GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user3&target=user4
-Content-Type: application/json
-
-//Expected Result:
-//HTTP/1.1 204 No Content
-//Response body: -- empty --
-
-
-### Test POST request - Invalid url-encoded format (400)
+### Test POST request - Invalid url-encoded format 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php
 Content-Type: application/x-www-form-urlencoded
 
@@ -508,3 +372,178 @@ source=user1
 //Expected Result:
 //HTTP/1.1 400 Bad Request
 //Response body: -- empty --
+
+//===========================
+
+
+// ==========================
+// 3. GET Request Validation
+// ==========================
+
+//===========================
+// 3.1 GET Request - valid data
+
+### Test GET request - Valid source and target 
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=user2
+Content-Type: application/json
+
+//Expected Result:
+//HTTP/1.1 200 OK
+//Response body: JSON object with messages from user1 to user2
+
+### Test GET request - Missing source parameter 
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?target=user2
+Content-Type: application/json
+
+//Expected Result:
+//HTTP/1.1 200 OK
+//Response body: JSON object with messages from all users to user2
+
+### Test GET request - Missing target parameter 
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user2
+Content-Type: application/json
+
+//Expected Result:
+//HTTP/1.1 200 OK
+//Response body: JSON object with messages from user2 to all users
+
+### Test GET - extra parameters 
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=user2&extra_param=This should be ignored
+Content-Type: application/json
+
+//Expected Result:
+//HTTP/1.1 200 OK
+//Response body: JSON object with messages from user1 to user2
+
+### Test GET request - empty target 
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=
+Content-Type: application/json
+
+//Expected Result:
+//HTTP/1.1 200 OK
+//Response body: JSON object with messages from user1 to all users
+
+### Test GET request - empty source 
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=&target=user2
+Content-Type: application/json
+
+//Expected Result:
+//HTTP/1.1 200 OK
+//Response body: JSON object with messages from all users to user2
+
+//===========================
+
+//===========================
+// 3.2 GET Request - invalid data
+
+### Test GET request - Both source and target missing 
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php
+Content-Type: application/json
+
+//Expected Result:
+//HTTP/1.1 400 Bad Request
+//Response body: -- empty --
+
+### Test GET request - source and target are the same 
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=user1
+Content-Type: application/json
+
+//Expected Result:
+//HTTP/1.1 400 Bad Request
+//Response body: -- empty --
+
+### Test GET request - empty source and target 
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=&target=
+Content-Type: application/json
+
+//Expected Result:
+//HTTP/1.1 400 Bad Request
+//Response body: -- empty --
+
+
+### Test GET request - special characters in source 
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1@!#&target=user2
+Content-Type: application/json
+
+//Expected Result:
+//HTTP/1.1 400 Bad Request
+//Response body: -- empty --
+
+### Test GET request - special characters in target 
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=user2@!#    
+Content-Type: application/json
+
+//Expected Result:
+//HTTP/1.1 400 Bad Request
+//Response body: -- empty --
+
+### Test GET request - special characters in both source and target 
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1@!#    &target=user    2@!#
+Content-Type: application/json
+
+//Expected Result:
+//HTTP/1.1 400 Bad Request
+//Response body: -- empty --
+
+### Test GET request - long usernames 
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=longusername1234567890123456789012345678901234567890&target=longusername1234567890123456789012345678901234567890
+Content-Type: application/json
+
+//Expected Result:
+//HTTP/1.1 400 Bad Request
+//Response body: -- empty --
+
+### Test GET request - long source 
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=longusername1234567890123456789012345678901234567890&target=user2
+Content-Type: application/json
+
+//Expected Result:
+//HTTP/1.1 400 Bad Request
+//Response body: -- empty --
+
+### Test GET request - long target 
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=longusername1234567890123456789012345678901234567890
+Content-Type: application/json
+
+//Expected Result:
+//HTTP/1.1 400 Bad Request
+//Response body: -- empty --
+
+### Test GET request - short usernames 
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=a&target=b
+Content-Type: application/json
+
+//Expected Result:
+//HTTP/1.1 400 Bad Request
+//Response body: -- empty --
+
+### Test GET request - short source 
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=a&target=user2
+Content-Type: application/json
+
+//Expected Result:
+//HTTP/1.1 400 Bad Request
+//Response body: -- empty --
+
+### Test GET request - short target 
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=b
+Content-Type: application/json
+
+//Expected Result:
+//HTTP/1.1 400 Bad Request
+//Response body: -- empty --
+
+//===========================
+
+//===========================
+// 3.3 GET Request - no messages found
+
+### Test GET request - No messages found 
+GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user3&target=user4
+Content-Type: application/json
+
+//Expected Result:
+//HTTP/1.1 204 No Content
+//Response body: -- empty --
+
+//===========================
