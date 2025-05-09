@@ -75,7 +75,7 @@ source=user1
 
 
 //===========================
-// 2.1 POST Request - valid data
+// 2.1 POST Request - Valid data
 
 ### Test POST request - Valid data 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
@@ -104,7 +104,7 @@ source=user2
 //===========================
 
 //===========================
-// 2.2 POST Request - invalid data
+// 2.2 POST Request - Invalid data
 
 ### Test POST request - SOURCE and TARGET are the same 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
@@ -218,7 +218,7 @@ source=user1
 //===========================
 
 //===========================
-// 2.3 POST Request - missing parameters
+// 2.3 POST Request - Missing parameters
 
 ### Test POST request - Missing source 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
@@ -294,7 +294,7 @@ Content-Type: application/x-www-form-urlencoded
 //===========================
 
 //===========================
-//2.4 POST Request - empty values
+//2.4 POST Request - Empty values
 
 ### Test POST request - empty source 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
@@ -335,7 +335,7 @@ Content-Type: application/x-www-form-urlencoded
 //===========================
 
 //===========================
-//2.5 POST Request - edge cases
+//2.5 POST Request - Edge cases
 
 ### Test POST request - extra parameters 
 POST https://ss2979.brighton.domains/ci527/assignment2/api.php HTTP/1.1
@@ -381,7 +381,7 @@ source=user1
 // ==========================
 
 //===========================
-// 3.1 GET Request - valid data
+// 3.1 GET Request - Valid data
 
 ### Test GET request - Valid source and target 
 GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user1&target=user2
@@ -434,7 +434,7 @@ Content-Type: application/json
 //===========================
 
 //===========================
-// 3.2 GET Request - invalid data
+// 3.2 GET Request - Invalid data
 
 ### Test GET request - Both source and target missing 
 GET https://ss2979.brighton.domains/ci527/assignment2/api.php
@@ -536,7 +536,7 @@ Content-Type: application/json
 //===========================
 
 //===========================
-// 3.3 GET Request - no messages found
+// 3.3 GET Request - No messages found
 
 ### Test GET request - No messages found 
 GET https://ss2979.brighton.domains/ci527/assignment2/api.php?source=user3&target=user4
